@@ -16,7 +16,7 @@ public class ConnexionDialog extends JDialog {
         setSize(250, 200);
         setContentPane(contentPane);
         adress.setBackground(Color.white);
-        adress.setBorder(BorderFactory.createTitledBorder("adress"));
+        adress.setBorder(BorderFactory.createTitledBorder("Address"));
 
         port.setBackground(Color.white);
         port.setBorder(BorderFactory.createTitledBorder("Port"));
