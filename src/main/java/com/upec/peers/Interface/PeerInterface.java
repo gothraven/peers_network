@@ -27,7 +27,6 @@ public class PeerInterface extends JFrame {
         console.setForeground(Color.LIGHT_GRAY);
         console.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         console.append("hey its me\n");
-        console.append("hey its measdasdasdasd\n");
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(800, 600);
