@@ -12,7 +12,7 @@ public class SendMessageDialog extends JDialog {
     public SendMessageDialog() {
         setContentPane(contentPane);
         setModal(true);
-        setTitle("Send Message ");
+        setTitle("SEND MESSAGE");
         setSize(300, 300);
         getRootPane().setDefaultButton(buttonOK);
 
