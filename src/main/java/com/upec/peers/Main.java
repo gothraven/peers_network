@@ -1,11 +1,15 @@
 package com.upec.peers;
 
-import com.upec.peers.Server.ServerCore;
-
 public class Main {
 
 	public static void main(String[] args) {
-		var serverCore = new ServerCore("gitlabe", 80);
-		serverCore.start();
+		// to test the server core
+//		try {
+//			var core = new Core(2020);
+//			core.execute();
+//			core.instantiateConnection("localhost", 1818);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 	}
 }
