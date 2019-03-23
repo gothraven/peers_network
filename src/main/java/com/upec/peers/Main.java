@@ -1,5 +1,6 @@
 package com.upec.peers;
 
+
 public class Main {
 
 	public static void main(String[] args) {
@@ -11,5 +12,10 @@ public class Main {
 //		} catch (IOException e) {
 //			e.printStackTrace();
 //		}
+
+        //lancer l'interface
+		//	PeerInterface pi = new PeerInterface();
+		//	pi.setVisible(true );
+
 	}
 }
