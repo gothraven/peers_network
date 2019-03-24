@@ -1,7 +1,11 @@
 package com.upec.peers.Server;
 
+import com.upec.peers.Treatement.PeerAddress;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.List;
+import java.util.function.Consumer;
 
 public class SerializerBuffer {
 
@@ -21,25 +25,24 @@ public class SerializerBuffer {
 		byteBuffer.putInt(i);
 	}
 
-	public void writeFloat(double d) {
-		byteBuffer.putDouble(d);
-	}
-
 	public int readInt() {
 		return byteBuffer.getInt();
+	}
+
+	public void writeFloat(double d) {
+		byteBuffer.putDouble(d);
 	}
 
 	public double readDouble() {
 		return byteBuffer.getDouble();
 	}
 
-
-	public void writeChar(char c) {
-		byteBuffer.putChar(c);
+	public void writeByte(byte b) {
+		byteBuffer.put(b);
 	}
 
-	public char readChar() {
-		return byteBuffer.getChar();
+	public byte readByte() {
+		return byteBuffer.get();
 	}
 
 	public void writeLong(Long l) {
@@ -59,7 +62,7 @@ public class SerializerBuffer {
 	public String readString() {
 		int n = byteBuffer.getInt();
 		int lim = byteBuffer.limit();
-		byteBuffer.limit(byteBuffer.position()+n);
+		byteBuffer.limit(byteBuffer.position() + n);
 		String s = charset.decode(byteBuffer).toString();
 		byteBuffer.limit(lim);
 		return s;

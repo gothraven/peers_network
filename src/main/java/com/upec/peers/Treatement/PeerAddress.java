@@ -1,14 +1,14 @@
 package com.upec.peers.Treatement;
 
 
-public class Peer {
+public class PeerAddress {
 
     private int port;
     private String url;
 
-    public Peer(int p, String u) {
-        this.port = p;
-        this.url = u;
+    public PeerAddress(int port, String url) {
+        this.port = port;
+        this.url = url;
     }
 
     public int getPort() {
@@ -17,5 +17,10 @@ public class Peer {
 
     public String getUrl() {
         return this.url;
+    }
+
+    @Override
+    public String toString() {
+        return url + ":" + port;
     }
 }

@@ -1,13 +1,14 @@
 package com.upec.peers.Server;
 
 
-import java.io.BufferedReader;
+import com.upec.peers.Treatement.MessageCommand;
+
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 
 /**
  * PeerConnection is a class to handle connection to another peer
@@ -17,6 +18,8 @@ import java.nio.charset.Charset;
 public class PeerConnection implements Runnable {
 
 	private PeersConnectingManager context;
+	private WritableByteChannel out;
+	private ReadableByteChannel in;
 	private String inetAddress;
 	private int port;
 	private Socket socket;
@@ -36,6 +39,12 @@ public class PeerConnection implements Runnable {
 //		this.queue = new ConcurrentLinkedQueue<Command>(); todo enable this after adding commands
 		this.socket = new Socket(inetAddress, port);
 		this.running = this.socket.isConnected();
+		this.in = Channels.newChannel(this.socket.getInputStream());
+		this.out = Channels.newChannel(this.socket.getOutputStream());
+	}
+
+	private void read() {
+
 	}
 
 	@Override
@@ -48,21 +57,15 @@ public class PeerConnection implements Runnable {
 //			 keep writing in the client
 			try {
 
-
-				OutputStream out = this.socket.getOutputStream();
-				BufferedReader buffer = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-
-				ByteBuffer bb = ByteBuffer.allocate(120);
-				bb.putChar('\1');
-				Charset charset = Charset.forName("UTF-8");
-				ByteBuffer bs = charset.encode("test\n");
-				bb.putInt(bs.remaining());
-				bb.put(bs);
-				out.write(bb.array());
-				out.flush();
-				var s = buffer.readLine();
-
-				System.out.println(this.socket.getPort() + s);
+				ByteBuffer bb = ByteBuffer.allocateDirect(512);
+				ByteBuffer command = MessageCommand.serialize("Hello");
+				command.rewind();
+				out.write(command);
+				in.read(bb);
+				bb.rewind();
+				bb.get();
+				String message = MessageCommand.deserialize(bb);
+				System.out.println(message);
 
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -73,6 +76,23 @@ public class PeerConnection implements Runnable {
 			} catch (InterruptedException e) {
 				terminate();
 			}
+			// keep writing in the client
+//			if (this.socket.getInputStream()) {
+//				this.read();
+//			}
+//			try {
+//				var in = new PrintWriter(this.socket.getOutputStream(), true);
+//				in.println("stuff");
+//				in.flush();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+			// wait to be notified about new messages
+//			try {
+//				wait();
+//			} catch (InterruptedException e) {
+//				terminate();
+//			}
 		}
 	}
 

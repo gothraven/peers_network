@@ -1,6 +1,7 @@
 package com.upec.peers.Server;
 
 import com.google.common.primitives.Bytes;
+import com.upec.peers.Treatement.MessageCommand;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -53,7 +54,7 @@ public class PeersConnectedManager implements Runnable {
 		int bytesRead = channel.read(byteBuffer);
 
 		if (bytesRead < 0) {
-			System.out.println("Client Leave");
+			System.out.println("Client Left");
 			sk.cancel();
 			channel.close();
 			return;
@@ -81,17 +82,14 @@ public class PeersConnectedManager implements Runnable {
 	}
 
 	private void response(ByteBuffer request, SocketChannel channel) {
-		Charset c = Charset.forName("UTF-8");
-		System.out.println(channel.socket().getPort());
-		if (request.getChar() == '\1') {
-			int n = request.getInt();
-			int lim = request.limit();
-			request.limit(request.position() + n);
-			String s = c.decode(request).toString();
-			request.limit(lim);
-			System.out.println("Message " + s);
+		byte id = request.get();
+		if (MessageCommand.ID == id) {
+			String message = MessageCommand.deserialize(request);
+			System.out.println(channel.socket().getPort() + " => " + message);
+		} else {
+			System.out.println("Error");
 		}
-		writeData(request, channel);
+		writeData(MessageCommand.serialize("Hello back\n"), channel);
 	}
 
 	private void writeData(ByteBuffer response, SocketChannel channel) {
@@ -103,8 +101,6 @@ public class PeersConnectedManager implements Runnable {
 				e.printStackTrace();
 			}
 		}
-
-
 	}
 
 	@Override

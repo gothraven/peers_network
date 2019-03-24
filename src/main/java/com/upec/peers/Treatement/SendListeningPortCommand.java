@@ -2,26 +2,28 @@ package com.upec.peers.Treatement;
 
 import com.upec.peers.Server.SerializerBuffer;
 
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 
-public class MessageCommand {
+public class SendListeningPortCommand {
 
-    public static byte ID = 0x01;
+    public static byte ID = 0x02;
 
-    public static ByteBuffer serialize(String message) {
+    public static ByteBuffer serialize(int port) {
         SerializerBuffer searlizerBuffer = new SerializerBuffer(ByteBuffer.allocate(512));
         searlizerBuffer.writeByte(ID);
-        searlizerBuffer.writeString(message);
+        searlizerBuffer.writeInt(port);
         return searlizerBuffer.getByteBuffer();
     }
 
-    public static String deserialize(ByteBuffer bb) {
+    public static int deserialize(ByteBuffer bb) {
         SerializerBuffer byteBuffer = new SerializerBuffer(bb);
-        return byteBuffer.readString();
+
+        return byteBuffer.readInt();
     }
 
     public static void main(String[] args) {
-        var t = serialize("test");
+        var t = serialize(1234);
         t.rewind();
         var id = t.get();
         assert id == ID;
