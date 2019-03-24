@@ -1,8 +1,13 @@
 package com.upec.peers.Server;
 
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 
 /**
  * PeerConnection is a class to handle connection to another peer
@@ -40,20 +45,34 @@ public class PeerConnection implements Runnable {
 //			while(!queue.isEmpty()) {
 //				os.print(queue.poll());
 //			}
-			// keep writing in the client
-//			try {
-//				var in = new PrintWriter(this.socket.getOutputStream(), true);
-//				in.println("stuff");
-//				in.flush();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
+//			 keep writing in the client
+			try {
+
+
+				OutputStream out = this.socket.getOutputStream();
+				BufferedReader buffer = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+
+				ByteBuffer bb = ByteBuffer.allocate(120);
+				bb.putChar('\1');
+				Charset charset = Charset.forName("UTF-8");
+				ByteBuffer bs = charset.encode("test\n");
+				bb.putInt(bs.remaining());
+				bb.put(bs);
+				out.write(bb.array());
+				out.flush();
+				var s = buffer.readLine();
+
+				System.out.println(this.socket.getPort() + s);
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			// wait to be notified about new messages
-//			try {
-//				wait();
-//			} catch (InterruptedException e) {
-//				terminate();
-//			}
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				terminate();
+			}
 		}
 	}
 
