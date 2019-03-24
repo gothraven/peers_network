@@ -3,6 +3,9 @@ package com.upec.peers.Server;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 
 /**
  * PeerConnection is a class to handle connection to another peer
@@ -12,6 +15,8 @@ import java.net.Socket;
 public class PeerConnection implements Runnable {
 
 	private PeersConnectingManager context;
+	private WritableByteChannel out;
+	private ReadableByteChannel in;
 	private String inetAddress;
 	private int port;
 	private Socket socket;
@@ -31,6 +36,12 @@ public class PeerConnection implements Runnable {
 //		this.queue = new ConcurrentLinkedQueue<Command>(); todo enable this after adding commands
 		this.socket = new Socket(inetAddress, port);
 		this.running = this.socket.isConnected();
+		this.in = Channels.newChannel(this.socket.getInputStream());
+		this.out = Channels.newChannel(this.socket.getOutputStream());
+	}
+
+	private void read() {
+
 	}
 
 	@Override
@@ -41,18 +52,8 @@ public class PeerConnection implements Runnable {
 //				os.print(queue.poll());
 //			}
 			// keep writing in the client
-//			try {
-//				var in = new PrintWriter(this.socket.getOutputStream(), true);
-//				in.println("stuff");
-//				in.flush();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-			// wait to be notified about new messages
-//			try {
-//				wait();
-//			} catch (InterruptedException e) {
-//				terminate();
+//			if (this.socket.getInputStream()) {
+//				this.read();
 //			}
 		}
 	}
