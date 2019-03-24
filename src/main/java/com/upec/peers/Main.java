@@ -14,8 +14,8 @@ public class Main {
 //		}
 
         //lancer l'interface
-		//	PeerInterface pi = new PeerInterface();
-		//	pi.setVisible(true );
+//		PeerInterface pi = new PeerInterface();
+//		pi.setVisible(true );
 
 	}
 }
