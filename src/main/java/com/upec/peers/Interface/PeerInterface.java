@@ -1,76 +1,69 @@
 package com.upec.peers.Interface;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class PeerInterface extends JFrame {
-    private JPanel panelRoot;
-    private JPanel panelConsole;
-    private JPanel panelOfListPeers;
-    private JPanel panelOfListConnexions;
-    private JPanel panelOfListActions;
+public class PeerInterface extends JFrame{
+    private JPanel rootPanel;
+    private JPanel consolePanel;
+    private JPanel peerListPanel;
+    private JPanel connexionListPanel;
+    private JPanel actionListPanel;
     private JButton connect;
     private JButton disconnect;
-    private JButton sendMessage;
-    private JButton listOfPeersRequest;
-    private JButton listOfFilesRequest;
-    private JButton downloadFile;
-    private JList listConnexions;
-    private JList listPeers;
+    private JButton LISTOFFILESButton;
+    private JButton LISTOFPEERSButton;
+    private JButton DOWNLOADButton;
+    private JList listOfPeers;
+    private JList listOfActions;
     private JTextArea console;
+    private JButton SENDMESSAGEButton;
 
     public PeerInterface() {
-        add(panelRoot);
-        console.setBackground(Color.BLACK);
-        console.setForeground(Color.LIGHT_GRAY);
-        console.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-        console.append("hey its me\n");
 
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(800, 600);
+        add(rootPanel) ;
         connect.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
-                var d = new ConnexionDialog();
+                var d = new ConnexionDialog() ;
                 d.show();
-                //d.getAdress();//String
-                //d.getPort();//int
             }
         });
         disconnect.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
-                new JOptionPane().showMessageDialog(null, "You are disconnected", "Disconnecting ...", JOptionPane.INFORMATION_MESSAGE);
+
+
+               new JOptionPane().showMessageDialog(null, "DISCONNECt", "Information", JOptionPane.INFORMATION_MESSAGE);
             }
         });
-        sendMessage.addActionListener(new ActionListener() {
+        LISTOFFILESButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
-                var d = new SendMessageDialog();
-                d.show();
+                new JOptionPane().showMessageDialog(null, "List Of Files", "Information", JOptionPane.INFORMATION_MESSAGE);
 
             }
         });
-        listOfPeersRequest.addActionListener(new ActionListener() {
+        LISTOFPEERSButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
-                // affiche list sur la console puis sur listOfPeers
-                console.append("affiche list sur la console puis sur listOfPeers\n");
-            }
-        });
-        listOfFilesRequest.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                //  new CreateDialogFromOptionPane (4);
-                console.append("affiche list file  sur la console puis rien\n");
-            }
-        });
-        downloadFile.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // new CreateDialogFromOptionPane (5);
-                var d = new DownloadFile();
-                d.show();
-                //d.getFileName() ;
-                //d.getBegin();
-                //d.getEnd();
+                new JOptionPane().showMessageDialog(null, "List Of Peers ", "Information", JOptionPane.INFORMATION_MESSAGE);
 
+            }
+        });
+        DOWNLOADButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                var d = new DownloadFile() ;
+                d.show();
+            }
+        });
+        SENDMESSAGEButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                var d = new SendMessageDialog() ;
+                d.show();
             }
         });
     }
