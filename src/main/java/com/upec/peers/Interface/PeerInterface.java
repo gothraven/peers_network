@@ -1,76 +1,86 @@
 package com.upec.peers.Interface;
 
+import com.upec.peers.Interface.dialogs.ConnexionDialog;
+import com.upec.peers.Interface.dialogs.DownloadFile;
+import com.upec.peers.Interface.dialogs.SendMessageDialog;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class PeerInterface extends JFrame {
-    private JPanel panelRoot;
-    private JPanel panelConsole;
-    private JPanel panelOfListPeers;
-    private JPanel panelOfListConnexions;
-    private JPanel panelOfListActions;
-    private JButton connect;
-    private JButton disconnect;
-    private JButton sendMessage;
-    private JButton listOfPeersRequest;
-    private JButton listOfFilesRequest;
-    private JButton downloadFile;
-    private JList listConnexions;
-    private JList listPeers;
+public class PeerInterface extends JFrame{
+    private JPanel rootPanel;
+    private JPanel consolePanel;
+    private JPanel peerListPanel;
+    private JPanel connexionListPanel;
+    private JPanel actionListPanel;
+    private DefaultListModel<String> connectionsListModal;
+    private DefaultListModel<String> knownPeersListModal;
+    private JList<String> connectionsList;
+    private JList<String> knownPeersList;
+    private JButton connectButton;
+    private JButton disconnectButton;
+    private JButton listOfFilesButton;
+    private JButton listOfPeersButton;
+    private JButton downloadButton;
+    private JButton sendMessageButton;
     private JTextArea console;
 
     public PeerInterface() {
-        add(panelRoot);
+        add(rootPanel);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setSize(new Dimension(800, 400));
+
+        consolePanel.setPreferredSize(new Dimension(400, 600));
+        peerListPanel.setPreferredSize(new Dimension(150, 600));
+        connexionListPanel.setPreferredSize(new Dimension(150, 600));
+        actionListPanel.setSize(new Dimension(100, 600));
+
+        connectionsListModal = new DefaultListModel<>();
+        knownPeersListModal = new DefaultListModel<>();
+        connectionsList.setModel(connectionsListModal);
+        knownPeersList.setModel(knownPeersListModal);
+        connectionsListModal.addElement("test:123");
+
         console.setBackground(Color.BLACK);
         console.setForeground(Color.LIGHT_GRAY);
         console.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-        console.append("hey its me\n");
+        console.append("WECOME HOME\n");
 
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(800, 600);
-        connect.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                var d = new ConnexionDialog();
-                d.show();
-                //d.getAdress();//String
-                //d.getPort();//int
-            }
+        connectButton.addActionListener(e -> {
+            var dialog = new ConnexionDialog((address, port) -> System.out.println(address + " : " + port));
+            dialog.setVisible(true);
+            this.connectionsListModal.addElement("here we go");
         });
-        disconnect.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                new JOptionPane().showMessageDialog(null, "You are disconnected", "Disconnecting ...", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-        sendMessage.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                var d = new SendMessageDialog();
-                d.show();
 
+        disconnectButton.addActionListener(e -> {
+            if (! this.connectionsList.isSelectionEmpty()) {
+                JOptionPane.showMessageDialog(null, "You were disconnected", "Disconnected", JOptionPane.INFORMATION_MESSAGE);
             }
         });
-        listOfPeersRequest.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // affiche list sur la console puis sur listOfPeers
-                console.append("affiche list sur la console puis sur listOfPeers\n");
-            }
-        });
-        listOfFilesRequest.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                //  new CreateDialogFromOptionPane (4);
-                console.append("affiche list file  sur la console puis rien\n");
-            }
-        });
-        downloadFile.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // new CreateDialogFromOptionPane (5);
-                var d = new DownloadFile();
-                d.show();
-                //d.getFileName() ;
-                //d.getBegin();
-                //d.getEnd();
 
+        listOfFilesButton.addActionListener(e -> {
+            if (! this.connectionsList.isSelectionEmpty()) {
+                console.append("new files\n");
+            }
+        });
+
+        listOfPeersButton.addActionListener(e -> {
+            if (! this.connectionsList.isSelectionEmpty()) {
+                knownPeersListModal.addElement("new peer");
+            }
+        });
+
+        downloadButton.addActionListener(e -> {
+            if (! this.connectionsList.isSelectionEmpty()) {
+                var dialog = new DownloadFile(fileName -> System.out.println("file: " + fileName));
+                dialog.setVisible(true);
+            }
+        });
+
+        sendMessageButton.addActionListener(e -> {
+            if (! this.connectionsList.isSelectionEmpty()) {
+                var d = new SendMessageDialog(s -> System.out.println("message: " + s));
+                d.setVisible(true);
             }
         });
     }

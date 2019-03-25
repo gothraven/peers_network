@@ -1,16 +1,21 @@
-package com.upec.peers.Interface;
+package com.upec.peers.Interface.dialogs;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.function.Consumer;
 
 public class DownloadFile extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
     private JTextField fileName;
+    private Consumer<String> onActionOk;
 
-    public DownloadFile() {
+    public DownloadFile(Consumer<String> onActionOk) {
+        this.onActionOk = onActionOk;
         setContentPane(contentPane);
         setSize(300, 120);
         setTitle("DOWNLOAD");
@@ -19,17 +24,8 @@ public class DownloadFile extends JDialog {
         fileName.setBackground(Color.white);
         fileName.setBorder(BorderFactory.createTitledBorder("File name"));
 
-        buttonOK.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onOK();
-            }
-        });
-
-        buttonCancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        });
+        buttonOK.addActionListener(e -> onOK());
+        buttonCancel.addActionListener(e -> onCancel());
 
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -40,27 +36,27 @@ public class DownloadFile extends JDialog {
         });
 
         // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        contentPane.registerKeyboardAction(e ->
+                        onCancel(),
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
     public static void main(String[] args) {
-        DownloadFile dialog = new DownloadFile();
+        DownloadFile dialog = new DownloadFile(System.out :: println);
         dialog.pack();
         dialog.setVisible(true);
         System.exit(0);
     }
 
     private void onOK() {
-        // add your code here
+        var fileName = this.fileName.getText();
+        this.onActionOk.accept(fileName);
         dispose();
     }
 
     private void onCancel() {
-        // add your code here if necessary
+        fileName.replaceSelection("");
         dispose();
     }
 }
