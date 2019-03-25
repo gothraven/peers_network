@@ -31,8 +31,8 @@ public class ListOfSharedFilesCommand {
             serializerBuffer.writeByte(ID);
             serializerBuffer.writeInt(listOfSharedFiles.size());
             for (SharedFile listOfSharedFile : listOfSharedFiles) {
-                serializerBuffer.writeLong(listOfSharedFile.getSize());
                 serializerBuffer.writeString(listOfSharedFile.getName());
+                serializerBuffer.writeLong(listOfSharedFile.getSize());
             }
             return serializerBuffer.getByteBuffer();
         }
@@ -42,7 +42,9 @@ public class ListOfSharedFilesCommand {
             SerializerBuffer serializerBuffer = new SerializerBuffer(byteBuffer);
             int taille = serializerBuffer.readInt();
             for (int i = 0; i < taille; i++) {
-                list.add(new SharedFile(serializerBuffer.readLong(), serializerBuffer.readString()));
+                String filename = serializerBuffer.readString();
+                long size = serializerBuffer.readLong();
+                list.add(new SharedFile(size, filename));
             }
             return list;
         }
