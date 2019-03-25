@@ -18,9 +18,8 @@ public class Main {
 			e.printStackTrace();
 		}
 
-        //lancer l'interface
+		//lancer l'interface
 //		PeerInterface pi = new PeerInterface();
-//		pi.setVisible(true );
-
+//		pi.setVisible(true);
 	}
 }
