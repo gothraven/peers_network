@@ -1,7 +1,7 @@
 package com.upec.peers.Server;
 
 
-import com.upec.peers.Treatement.MessageCommand;
+import com.upec.peers.Treatement.*;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
+import java.util.List;
 
 /**
  * PeerConnection is a class to handle connection to another peer
@@ -50,49 +51,29 @@ public class PeerConnection implements Runnable {
 	@Override
 	public void run() {
 		while (this.running) {
-			// todo send commands in queue
-//			while(!queue.isEmpty()) {
-//				os.print(queue.poll());
-//			}
-//			 keep writing in the client
 			try {
-
 				ByteBuffer bb = ByteBuffer.allocateDirect(512);
-				ByteBuffer command = MessageCommand.serialize("Hello");
-				command.rewind();
-				out.write(command);
 				in.read(bb);
 				bb.rewind();
-				bb.get();
-				String message = MessageCommand.deserialize(bb);
-				System.out.println(message);
+				var id = bb.get();
+				if (id == MessageCommand.ID) {
+					String message = MessageCommand.deserialize(bb);
+					System.out.println(message);
+				} else if (id == ListOfPeersCommand.Response.ID) {
+					List<PeerAddress> list = ListOfPeersCommand.Response.deserialize(bb);
+					System.out.println(list);
+				} else if (id == ListOfSharedFilesCommand.Response.ID) {
+					List<SharedFile> list = ListOfSharedFilesCommand.Response.deserialize(bb);
+					System.out.println(list);
+				}
+
+				ByteBuffer command = ListOfSharedFilesCommand.Request.serialize();
+				command.flip();
+				out.write(command);
 
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			// wait to be notified about new messages
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-				terminate();
-			}
-			// keep writing in the client
-//			if (this.socket.getInputStream()) {
-//				this.read();
-//			}
-//			try {
-//				var in = new PrintWriter(this.socket.getOutputStream(), true);
-//				in.println("stuff");
-//				in.flush();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-			// wait to be notified about new messages
-//			try {
-//				wait();
-//			} catch (InterruptedException e) {
-//				terminate();
-//			}
 		}
 	}
 
