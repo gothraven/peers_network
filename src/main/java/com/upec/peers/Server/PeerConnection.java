@@ -1,8 +1,11 @@
 package com.upec.peers.Server;
 
 
+import com.upec.peers.Treatement.MessageCommand;
+
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
@@ -51,9 +54,44 @@ public class PeerConnection implements Runnable {
 //			while(!queue.isEmpty()) {
 //				os.print(queue.poll());
 //			}
+//			 keep writing in the client
+			try {
+
+				ByteBuffer bb = ByteBuffer.allocateDirect(512);
+				ByteBuffer command = MessageCommand.serialize("Hello");
+				command.rewind();
+				out.write(command);
+				in.read(bb);
+				bb.rewind();
+				bb.get();
+				String message = MessageCommand.deserialize(bb);
+				System.out.println(message);
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			// wait to be notified about new messages
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				terminate();
+			}
 			// keep writing in the client
 //			if (this.socket.getInputStream()) {
 //				this.read();
+//			}
+//			try {
+//				var in = new PrintWriter(this.socket.getOutputStream(), true);
+//				in.println("stuff");
+//				in.flush();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+			// wait to be notified about new messages
+//			try {
+//				wait();
+//			} catch (InterruptedException e) {
+//				terminate();
 //			}
 		}
 	}

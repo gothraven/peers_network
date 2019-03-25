@@ -22,7 +22,7 @@ public class DownloadFile extends JDialog {
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
         fileName.setBackground(Color.white);
-        fileName.setBorder(BorderFactory.createTitledBorder("File name"));
+        fileName.setBorder(BorderFactory.createTitledBorder("SharedFile name"));
 
         buttonOK.addActionListener(e -> onOK());
         buttonCancel.addActionListener(e -> onCancel());
