@@ -7,7 +7,11 @@ public class SerializerBuffer {
 
 	final static Charset charset = Charset.forName("UTF-8");
 
-	ByteBuffer byteBuffer;
+	private ByteBuffer byteBuffer;
+
+	public ByteBuffer getByteBuffer() {
+		return byteBuffer;
+	}
 
 	public SerializerBuffer(ByteBuffer byteBuffer) {
 		this.byteBuffer = byteBuffer;
@@ -27,6 +31,23 @@ public class SerializerBuffer {
 
 	public double readDouble() {
 		return byteBuffer.getDouble();
+	}
+
+
+	public void writeChar(char c) {
+		byteBuffer.putChar(c);
+	}
+
+	public char readChar() {
+		return byteBuffer.getChar();
+	}
+
+	public void writeLong(Long l) {
+		byteBuffer.putLong(l);
+	}
+
+	public Long readLong() {
+		return byteBuffer.getLong();
 	}
 
 	public void writeString(String s) {

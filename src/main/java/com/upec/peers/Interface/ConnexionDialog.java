@@ -19,7 +19,7 @@ public class ConnexionDialog extends JDialog {
         adress.setBorder(BorderFactory.createTitledBorder("Address"));
 
         port.setBackground(Color.white);
-        port.setBorder(BorderFactory.createTitledBorder("Port"));
+        port.setBorder(BorderFactory.createTitledBorder("PortCommand"));
 
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
