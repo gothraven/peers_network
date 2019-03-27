@@ -47,13 +47,11 @@ public class SerializerBuffer {
 		byteBuffer.put(bs);
 	}
 
-	public String readString() {
-		int n = byteBuffer.getInt();
-		int lim = byteBuffer.limit();
-		byteBuffer.limit(byteBuffer.position() + n);
-		String s = charset.decode(byteBuffer).toString();
-		byteBuffer.limit(lim);
-		return s;
+	public String readString(){
+		int size = byteBuffer.getInt();
+		byte[] bytes = new byte[size];;
+		byteBuffer.get(bytes);
+		return new String(bytes);
 	}
 
 	public <T> T readObject(Creator<T> creator) {

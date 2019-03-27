@@ -3,6 +3,9 @@ package com.upec.peers.Treatement;
 import com.upec.peers.Server.SerializerBuffer;
 import org.junit.Test;
 
+import java.nio.BufferUnderflowException;
+import java.nio.ByteBuffer;
+
 import static org.junit.Assert.*;
 
 public class MessageRequestTest {
@@ -74,5 +77,21 @@ public class MessageRequestTest {
 		assertEquals(emojiesText, messageObject.getMessage());
 	}
 
-	// todo add a test that it end an exeptetion when there is less bytes in the buffer
+	@Test
+	public void deserializeMessageWithoutEnoughData() {
+		SerializerBuffer sb = new SerializerBuffer(ByteBuffer.allocate(8));
+		sb.writeByte(MessageRequest.ID);
+		sb.writeInt(3);
+		sb.writeByte((byte)'s');
+		sb.getByteBuffer().flip();
+
+		assertEquals(MessageRequest.ID, sb.readByte());
+		MessageRequest messageObject = null;
+		try {
+			messageObject = sb.readObject(MessageRequest.creator);
+		} catch (BufferUnderflowException e) {
+			assertNotNull(e);
+		}
+		assertNull(messageObject);
+	}
 }

@@ -11,7 +11,10 @@ public class MessageRequest implements Serializable {
 
     private String message;
 
-    public static Creator<MessageRequest> creator = serializerBuffer -> new MessageRequest(serializerBuffer.readString());
+    public static Creator<MessageRequest> creator = serializerBuffer -> {
+        var message = serializerBuffer.readString();
+        return new MessageRequest(message);
+    };
 
     public MessageRequest(String message) {
         this.message = message;
