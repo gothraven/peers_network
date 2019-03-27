@@ -59,8 +59,8 @@ public class PeerConnection implements Runnable {
 				if (id == MessageCommand.ID) {
 					String message = MessageCommand.deserialize(bb);
 					System.out.println(message);
-				} else if (id == ListOfPeersCommand.Response.ID) {
-					List<PeerAddress> list = ListOfPeersCommand.Response.deserialize(bb);
+				} else if (id == ListOfPeersRequest.Response.ID) {
+					List<PeerAddress> list = ListOfPeersRequest.Response.deserialize(bb);
 					System.out.println(list);
 				} else if (id == ListOfSharedFilesCommand.Response.ID) {
 					List<SharedFile> list = ListOfSharedFilesCommand.Response.deserialize(bb);

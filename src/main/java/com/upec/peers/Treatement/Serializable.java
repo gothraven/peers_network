@@ -5,6 +5,6 @@ import com.upec.peers.Server.SerializerBuffer;
 import java.nio.BufferOverflowException;
 
 
-interface Serializable {
-    SerializerBuffer serialize() throws BufferOverflowException;
+public interface Serializable {
+    SerializerBuffer serialize();
 }

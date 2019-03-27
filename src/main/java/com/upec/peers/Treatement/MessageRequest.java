@@ -3,7 +3,6 @@ package com.upec.peers.Treatement;
 
 import com.upec.peers.Server.SerializerBuffer;
 
-import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 
 public class MessageRequest implements Serializable {
@@ -29,7 +28,7 @@ public class MessageRequest implements Serializable {
     }
 
     @Override
-    public SerializerBuffer serialize() throws BufferOverflowException {
+    public SerializerBuffer serialize() {
         SerializerBuffer searlizerBuffer = new SerializerBuffer(ByteBuffer.allocate(512));
         searlizerBuffer.writeByte(ID);
         searlizerBuffer.writeString(this.message);

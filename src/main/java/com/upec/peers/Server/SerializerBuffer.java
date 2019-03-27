@@ -1,28 +1,17 @@
 package com.upec.peers.Server;
 
-import com.upec.peers.Treatement.PeerAddress;
 
-import java.io.Serializable;
-import java.nio.BufferOverflowException;
-import java.nio.BufferUnderflowException;
+import com.upec.peers.Treatement.Creator;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.util.List;
-import java.util.function.Consumer;
 
 
-interface Creator<T> {
-	T construct(SerializerBuffer bb) throws BufferUnderflowException;
-}
 public class SerializerBuffer {
 
-	final static Charset charset = Charset.forName("UTF-8");
+	private final static Charset charset = Charset.forName("UTF-8");
 
 	private ByteBuffer byteBuffer;
-
-	public ByteBuffer getByteBuffer() {
-		return byteBuffer;
-	}
 
 	public SerializerBuffer(ByteBuffer byteBuffer) {
 		this.byteBuffer = byteBuffer;
@@ -34,14 +23,6 @@ public class SerializerBuffer {
 
 	public int readInt() {
 		return byteBuffer.getInt();
-	}
-
-	public void writeFloat(double d) {
-		byteBuffer.putDouble(d);
-	}
-
-	public double readDouble() {
-		return byteBuffer.getDouble();
 	}
 
 	public void writeByte(byte b) {
@@ -75,13 +56,12 @@ public class SerializerBuffer {
 		return s;
 	}
 
-	public <T> void writeObject(T object) throws BufferOverflowException {
-		System.out.println("Test");
+	public <T> T readObject(Creator<T> creator) {
+		return creator.construct(this);
 	}
 
-	public <T> T readObject(Creator<T> creator) throws BufferUnderflowException {
-		var s = creator.construct(this);
-		return s;
+	public ByteBuffer getByteBuffer() {
+		return byteBuffer;
 	}
 
 	@Override

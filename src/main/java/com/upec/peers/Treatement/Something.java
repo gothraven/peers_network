@@ -3,7 +3,6 @@ package com.upec.peers.Treatement;
 
 import com.upec.peers.Server.SerializerBuffer;
 
-import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
@@ -45,7 +44,7 @@ class Something implements Serializable/*, Command*/ {
         this.s = s;
     }
 
-    public SerializerBuffer serialize() throws BufferOverflowException {
+    public SerializerBuffer serialize() {
         return new SerializerBuffer(ByteBuffer.allocate(12));
     }
 

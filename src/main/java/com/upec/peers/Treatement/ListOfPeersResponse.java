@@ -6,39 +6,37 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListOfPeersResponse {
+public class ListOfPeersResponse implements Serializable {
 
 	public static byte ID = 0x04;
 
-	public List<PeerAddress> peerAddresses;
+	private List<PeerAddress> peerAddresses;
+
 	public Creator<ListOfPeersResponse> creator = serializerBuffer -> {
-		var listOfPeersResponse = new ListOfPeersResponse();
 		int listLength = serializerBuffer.readInt();
+		List<PeerAddress> peerAddresses = new ArrayList<>();
 		for (int i = 0; i < listLength; i++) {
 			var port = serializerBuffer.readInt();
 			var address = serializerBuffer.readString();
-			listOfPeersResponse.getPeerAddresses().add(new PeerAddress(port, address));
+			peerAddresses.add(new PeerAddress(port, address));
 		}
-		return listOfPeersResponse;
+		return new ListOfPeersResponse(peerAddresses);
 	};
 
 	public ListOfPeersResponse(List<PeerAddress> peerAddresses) {
 		this.peerAddresses = peerAddresses;
 	}
 
-	private ListOfPeersResponse() {
-		this.peerAddresses = new ArrayList<>();
-	}
-
-	public static ByteBuffer serialize(List<PeerAddress> peersAddressList) {
+	@Override
+	public SerializerBuffer serialize() {
 		SerializerBuffer searlizerBuffer = new SerializerBuffer(ByteBuffer.allocate(512));
 		searlizerBuffer.writeByte(ID);
-		searlizerBuffer.writeInt(peersAddressList.size());
-		for (PeerAddress peerAddress : peersAddressList) {
+		searlizerBuffer.writeInt(peerAddresses.size());
+		for (PeerAddress peerAddress : peerAddresses) {
 			searlizerBuffer.writeInt(peerAddress.getPort());
 			searlizerBuffer.writeString(peerAddress.getUrl());
 		}
-		return searlizerBuffer.getByteBuffer();
+		return searlizerBuffer;
 	}
 
 	public List<PeerAddress> getPeerAddresses() {
