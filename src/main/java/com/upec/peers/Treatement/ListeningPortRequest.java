@@ -10,10 +10,14 @@ public class ListeningPortRequest implements Serializable {
 
     private int port;
 
-    public Creator<ListeningPortRequest> creator = serializerBuffer -> {
+    public static Creator<ListeningPortRequest> creator = serializerBuffer -> {
         int port = serializerBuffer.readInt();
         return new ListeningPortRequest(port);
     };
+
+    public int getPort() {
+        return this.port;
+    }
 
     public ListeningPortRequest(int port) {
         this.port = port;
