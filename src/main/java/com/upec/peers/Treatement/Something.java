@@ -1,6 +1,8 @@
 package com.upec.peers.Treatement;
 
 
+import com.upec.peers.Server.SerializerBuffer;
+
 import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
@@ -26,8 +28,13 @@ class Something implements Serializable/*, Command*/ {
 
     }
 
-    public ByteBuffer serialize() throws BufferOverflowException {
-        return ByteBuffer.allocate(12);
+    public static void main(String[] args) {
+        var s = new Something(21);
+        SerializerBuffer bb = s.serialize();
+
+        var s2  = new Something();
+        s2.deserialize(bb.getByteBuffer());
+
     }
 
     public void deserialize(ByteBuffer bb) throws BufferUnderflowException {
@@ -38,14 +45,8 @@ class Something implements Serializable/*, Command*/ {
         this.s = s;
     }
 
-
-    public static void main(String[] args) {
-        var s = new Something(21);
-        ByteBuffer bb = s.serialize();
-
-        var s2  = new Something();
-        s2.deserialize(bb);
-
+    public SerializerBuffer serialize() throws BufferOverflowException {
+        return new SerializerBuffer(ByteBuffer.allocate(12));
     }
 
 }
