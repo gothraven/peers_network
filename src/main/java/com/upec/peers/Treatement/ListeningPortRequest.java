@@ -15,6 +15,10 @@ public class ListeningPortRequest implements Serializable {
         return new ListeningPortRequest(port);
     };
 
+    public int getPort() {
+        return this.port;
+    }
+
     public ListeningPortRequest(int port) {
         this.port = port;
     }
