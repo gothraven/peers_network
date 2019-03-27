@@ -4,6 +4,7 @@ import com.google.common.primitives.Bytes;
 import com.upec.peers.Treatement.MessageCommand;
 
 import java.io.IOException;
+import java.lang.management.BufferPoolMXBean;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
@@ -70,6 +71,8 @@ public class PeersConnectedManager implements Runnable {
 			byteBuffer.clear();
 			bytesRead = channel.read(byteBuffer);
 		}
+
+		BufferPool pool = new BufferPool();
 
 		ByteBuffer request = ByteBuffer.wrap(Bytes.toArray(byteLinkedList));
 
