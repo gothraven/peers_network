@@ -9,6 +9,9 @@ import java.util.List;
 public class ListOfSharedFilesResponse implements Serializable {
 
     public static byte ID = 0x06;
+
+    private List<SharedFile> listOfSharedFiles;
+
     public Creator<ListOfSharedFilesResponse> creator = serializerBuffer -> {
         int listLength = serializerBuffer.readInt();
         List<SharedFile> listOfFiles = new ArrayList<>();
@@ -19,15 +22,9 @@ public class ListOfSharedFilesResponse implements Serializable {
         }
         return new ListOfSharedFilesResponse(listOfFiles);
     };
-    private List<SharedFile> listOfSharedFiles;
 
     public ListOfSharedFilesResponse(List<SharedFile> listOfSharedFiles) {
         this.listOfSharedFiles = listOfSharedFiles;
-    }
-
-    public static void main(String[] args) {
-
-
     }
 
     @Override

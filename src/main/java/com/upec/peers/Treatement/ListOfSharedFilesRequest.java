@@ -9,9 +9,7 @@ public class ListOfSharedFilesRequest implements Serializable {
     public static byte ID = 0x05;
     public Creator<ListOfSharedFilesRequest> creator = byteBuffer -> new ListOfSharedFilesRequest();
 
-    public ListOfSharedFilesRequest() {
-
-    }
+    public ListOfSharedFilesRequest() {}
 
     @Override
     public SerializerBuffer serialize() {
