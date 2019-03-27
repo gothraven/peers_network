@@ -46,4 +46,8 @@ public class ListOfPeersResponse implements Serializable {
 	public void setPeerAddresses(List<PeerAddress> peerAddresses) {
 		this.peerAddresses = peerAddresses;
 	}
+
+    public static void main(String[] args) {
+
+    }
 }

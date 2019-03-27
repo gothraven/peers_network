@@ -1,16 +1,11 @@
 package com.upec.peers.Treatement;
 
-import com.upec.peers.Server.SerializerBuffer;
-
-import java.io.*;
-import java.nio.ByteBuffer;
-
 public class SharedFile {
 
     private Long size;
     private String name;
 
-    public SharedFile(Long size, String name) {
+    public SharedFile(String name, Long size) {
         this.size = size;
         this.name = name;
     }
