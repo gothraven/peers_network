@@ -8,7 +8,7 @@ public class ListOfPeersRequest implements Serializable {
 
 	public static byte ID = 0x03;
 
-	public Creator<ListOfPeersRequest> creator = byteBuffer -> new ListOfPeersRequest();
+	public static Creator<ListOfPeersRequest> creator = byteBuffer -> new ListOfPeersRequest();
 
 	public ListOfPeersRequest() {}
 

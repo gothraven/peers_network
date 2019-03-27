@@ -54,6 +54,16 @@ public class SerializerBuffer {
 		return new String(bytes);
 	}
 
+	public void writeByteBuffer(ByteBuffer byteBuffer) {
+		byteBuffer.put(byteBuffer);
+	}
+
+	public ByteBuffer readToByteBuffer(int length) {
+		byte[] bytes = new byte[length];;
+		return byteBuffer.get(bytes);
+	}
+
+
 	public <T> T readObject(Creator<T> creator) {
 		return creator.construct(this);
 	}
@@ -66,4 +76,5 @@ public class SerializerBuffer {
 	public String toString() {
 		return byteBuffer.toString();
 	}
+
 }
