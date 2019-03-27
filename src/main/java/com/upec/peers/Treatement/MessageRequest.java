@@ -7,13 +7,11 @@ import java.nio.ByteBuffer;
 
 public class MessageRequest implements Serializable {
 
+    public static byte ID = 0x01;
 
-    private static byte ID = 0x01;
     private String message;
 
-    public Creator<MessageRequest> creator = serializerBuffer -> new MessageRequest(serializerBuffer.readString());
-
-
+    public static Creator<MessageRequest> creator = serializerBuffer -> new MessageRequest(serializerBuffer.readString());
 
     public MessageRequest(String message) {
         this.message = message;
@@ -21,14 +19,18 @@ public class MessageRequest implements Serializable {
 
     @Override
     public SerializerBuffer serialize() {
-        SerializerBuffer searlizerBuffer = new SerializerBuffer(ByteBuffer.allocate(512));
+        ByteBuffer byteBuffer = ByteBuffer.allocate(this.message.getBytes().length + 1 + 4);
+        SerializerBuffer searlizerBuffer = new SerializerBuffer(byteBuffer);
         searlizerBuffer.writeByte(ID);
         searlizerBuffer.writeString(this.message);
         return searlizerBuffer;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
     public void setMessage(String message) {
         this.message = message;
     }
-
 }
