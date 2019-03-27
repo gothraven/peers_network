@@ -2,11 +2,18 @@ package com.upec.peers.Server;
 
 import com.upec.peers.Treatement.PeerAddress;
 
+import java.io.Serializable;
+import java.nio.BufferOverflowException;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.function.Consumer;
 
+
+interface Creator<T> {
+	T construct(SerializerBuffer bb) throws BufferUnderflowException;
+}
 public class SerializerBuffer {
 
 	final static Charset charset = Charset.forName("UTF-8");
@@ -65,6 +72,15 @@ public class SerializerBuffer {
 		byteBuffer.limit(byteBuffer.position() + n);
 		String s = charset.decode(byteBuffer).toString();
 		byteBuffer.limit(lim);
+		return s;
+	}
+
+	public <T> void writeObject(T object) throws BufferOverflowException {
+		System.out.println("Test");
+	}
+
+	public <T> T readObject(Creator<T> creator) throws BufferUnderflowException {
+		var s = creator.construct(this);
 		return s;
 	}
 
