@@ -1,11 +1,10 @@
 package com.upec.peers.Treatement;
 
+import com.upec.peers.Server.SerializerBuffer;
+
 import java.nio.BufferOverflowException;
-import java.nio.ByteBuffer;
-
-
 
 
 interface Serializable {
-    ByteBuffer serialize() throws BufferOverflowException;
+    SerializerBuffer serialize() throws BufferOverflowException;
 }
