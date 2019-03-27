@@ -1,14 +1,14 @@
 package com.upec.peers;
 
 
-import com.upec.peers.Server.Core;
+import com.upec.peers.network.Core;
 
 import java.io.IOException;
 
 public class Main {
 
 	public static void main(String[] args) {
-		// to test the server core
+		// to test the network core
 		try {
 			var core = new Core(2020);
 			core.execute();
