@@ -7,20 +7,12 @@ import java.nio.ByteBuffer;
 
 public class MessageRequest implements Serializable {
 
+
     private static byte ID = 0x01;
-    /*
-    * public Creator<Something> creator = new Creator<Something>() {
-        @Override
-        public Something construct(ByteBuffer byteBuffer) throws BufferUnderflowException {
-            var s = new Something();
-
-            return null;
-    }*/
-    public Creator<MessageRequest> creator = serializerBuffer -> {
-
-        return
-    };
     private String message;
+
+    public Creator<MessageRequest> creator = serializerBuffer -> new MessageRequest(serializerBuffer.readString());
+
 
 
     public MessageRequest(String message) {
