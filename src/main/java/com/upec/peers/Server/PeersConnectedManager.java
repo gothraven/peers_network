@@ -1,10 +1,8 @@
 package com.upec.peers.Server;
 
 import com.google.common.primitives.Bytes;
-import com.upec.peers.Treatement.MessageCommand;
 
 import java.io.IOException;
-import java.lang.management.BufferPoolMXBean;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
@@ -12,7 +10,6 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -86,13 +83,13 @@ public class PeersConnectedManager implements Runnable {
 
 	private void response(ByteBuffer request, SocketChannel channel) {
 		byte id = request.get();
-		if (MessageCommand.ID == id) {
-			String message = MessageCommand.deserialize(request);
-			System.out.println(channel.socket().getPort() + " => " + message);
-		} else {
-			System.out.println("Error");
-		}
-		writeData(MessageCommand.serialize("Hello back\n"), channel);
+//		if (MessageCommand.ID == id) {
+//			String message = MessageCommand.deserialize(request);
+//			System.out.println(channel.socket().getPort() + " => " + message);
+//		} else {
+//			System.out.println("Error");
+//		}
+//		writeData(MessageCommand.serialize("Hello back\n"), channel);
 	}
 
 	private void writeData(ByteBuffer response, SocketChannel channel) {

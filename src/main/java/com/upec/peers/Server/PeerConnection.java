@@ -51,29 +51,25 @@ public class PeerConnection implements Runnable {
 	@Override
 	public void run() {
 		while (this.running) {
-			try {
-				ByteBuffer bb = ByteBuffer.allocateDirect(512);
-				in.read(bb);
-				bb.rewind();
-				var id = bb.get();
-				if (id == MessageCommand.ID) {
-					String message = MessageCommand.deserialize(bb);
-					System.out.println(message);
-				} else if (id == ListOfPeersRequest.Response.ID) {
-					List<PeerAddress> list = ListOfPeersRequest.Response.deserialize(bb);
-					System.out.println(list);
-				} else if (id == ListOfSharedFilesCommand.Response.ID) {
-					List<SharedFile> list = ListOfSharedFilesCommand.Response.deserialize(bb);
-					System.out.println(list);
-				}
+			//				ByteBuffer bb = ByteBuffer.allocateDirect(512);
+//				in.read(bb);
+//				bb.rewind();
+//				var id = bb.get();
+//				if (id == MessageCommand.ID) {
+//					String message = MessageCommand.deserialize(bb);
+//					System.out.println(message);
+//				} else if (id == ListOfPeersRequest.Response.ID) {
+//					List<PeerAddress> list = ListOfPeersRequest.Response.deserialize(bb);
+//					System.out.println(list);
+//				} else if (id == ListOfSharedFilesCommand.Response.ID) {
+//					List<SharedFile> list = ListOfSharedFilesCommand.Response.deserialize(bb);
+//					System.out.println(list);
+//				}
+//
+//				ByteBuffer command = ListOfSharedFilesCommand.Request.serialize();
+//				command.flip();
+//				out.write(command);
 
-				ByteBuffer command = ListOfSharedFilesCommand.Request.serialize();
-				command.flip();
-				out.write(command);
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 
