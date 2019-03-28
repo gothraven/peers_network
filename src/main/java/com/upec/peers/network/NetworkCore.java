@@ -22,6 +22,14 @@ public class NetworkCore implements NetworkObservable {
 		this.execute();
 	}
 
+	@Override
+	public void regesterObserver(NetworkInterface observer) {
+		this.networkObserver = observer;
+		this.logger.addHandler(observer.getLogHandler());
+		this.peersConnectedManager.regesterListener(observer);
+		this.peersConnectingManager.regesterListener(observer);
+	}
+
 	public void execute() {
 		new Thread(this.peersConnectedManager).start();
 	}
@@ -46,11 +54,19 @@ public class NetworkCore implements NetworkObservable {
 		logger.log(Level.INFO, "Connection closed with " + identifier);
 	}
 
-	@Override
-	public void regesterObserver(NetworkInterface observer) {
-		this.networkObserver = observer;
-		this.logger.addHandler(observer.getLogHandler());
-		this.peersConnectedManager.regesterListener(observer);
-		this.peersConnectingManager.regesterListener(observer);
+	public void sendMessage(String identifier, String message) {
+		this.peersConnectingManager.sendMessageTo(identifier, message);
+	}
+
+	public void askForListOfSharedFiles(String identifier) {
+		this.peersConnectingManager.askForListOfSharedFiles(identifier);
+	}
+
+	public void sendListeningPort(String identifier) {
+		this.peersConnectingManager.sendListeningPort(identifier);
+	}
+
+	public void askForListOfPeers(String identifier) {
+		this.peersConnectingManager.askForListOfPeers(identifier);
 	}
 }

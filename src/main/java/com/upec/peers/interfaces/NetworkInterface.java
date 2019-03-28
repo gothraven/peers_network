@@ -33,6 +33,7 @@ public class NetworkInterface extends JFrame implements NetworkObserver {
     private JButton downloadButton;
     private JButton sendMessageButton;
     private JTextArea console;
+    private JButton sendListeningPortButton;
 
     private NetworkCore networkCore;
 
@@ -84,13 +85,15 @@ public class NetworkInterface extends JFrame implements NetworkObserver {
 
         listOfFilesButton.addActionListener(e -> {
             if (! this.connectionsList.isSelectionEmpty()) {
-                console.append("new files\n");
+                var identifier = this.connectionsListModal.get(this.connectionsList.getSelectedIndex());
+                this.networkCore.askForListOfSharedFiles(identifier);
             }
         });
 
         listOfPeersButton.addActionListener(e -> {
             if (! this.connectionsList.isSelectionEmpty()) {
-                knownPeersListModal.addElement("new peer");
+                var identifier = this.connectionsListModal.get(this.connectionsList.getSelectedIndex());
+                this.networkCore.askForListOfPeers(identifier);
             }
         });
 
@@ -103,8 +106,18 @@ public class NetworkInterface extends JFrame implements NetworkObserver {
 
         sendMessageButton.addActionListener(e -> {
             if (! this.connectionsList.isSelectionEmpty()) {
-                var d = new SendMessageDialog(s -> System.out.println("message: " + s));
+                var d = new SendMessageDialog(message -> {
+                    var identifier = this.connectionsListModal.get(this.connectionsList.getSelectedIndex());
+                    this.networkCore.sendMessage(identifier, message);
+                });
                 d.setVisible(true);
+            }
+        });
+
+        sendListeningPortButton.addActionListener(e -> {
+            if (! this.connectionsList.isSelectionEmpty()) {
+                var identifier = this.connectionsListModal.get(this.connectionsList.getSelectedIndex());
+                this.networkCore.sendListeningPort(identifier);
             }
         });
 

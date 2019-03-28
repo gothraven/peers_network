@@ -50,4 +50,8 @@ public class ListOfPeersResponse implements Serializable {
 		this.peerAddresses = peerAddresses;
 	}
 
+	@Override
+	public String toString() {
+		return peerAddresses.toString();
+	}
 }

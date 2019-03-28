@@ -45,4 +45,9 @@ public class ListOfSharedFilesResponse implements Serializable {
     public List<SharedFile> getListOfSharedFiles() {
         return listOfSharedFiles;
     }
+
+    @Override
+    public String toString() {
+        return listOfSharedFiles.toString();
+    }
 }

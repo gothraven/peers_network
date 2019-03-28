@@ -1,5 +1,6 @@
 package com.upec.peers.network.server;
 
+import com.google.common.primitives.Bytes;
 import com.upec.peers.network.nio.SerializerBuffer;
 import com.upec.peers.network.objects.PeerAddress;
 import com.upec.peers.network.objects.SharedFile;
@@ -54,6 +55,8 @@ public class PeerConnected {
             serializerBuffer.getByteBuffer().clear();
             bytesRead = socketChannel.read(serializerBuffer.getByteBuffer());
         }
+        byte[] bytes = Bytes.toArray(byteLinkedList);
+        ByteBuffer.wrap(bytes);
         try {
             response();
         } catch (Exception e) {
@@ -147,10 +150,4 @@ public class PeerConnected {
         manager.setKnownPeers(peers);
         System.out.println(socketChannel.socket().getPort() + " => " + port.getPort());
     }
-    public static void main (String [] args ){
-        // la taille du Buffer pour le taille des lists
-        // comportement bizzare , lors de chargenment du repertoire
-
-    }
-
 }

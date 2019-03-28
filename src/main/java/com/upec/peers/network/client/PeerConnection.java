@@ -46,8 +46,9 @@ public class PeerConnection implements Runnable {
 			peerOutput = new PeerOutput(socket.getOutputStream());
 			peerInput.run();
 		} catch (Exception e) {
-			logger.log(Level.WARNING, e.getMessage());
-			terminate();
+			e.printStackTrace();
+			logger.log(Level.SEVERE, "PeerConnection IO issue, Disconnected !");
+			this.context.terminateConnection(this.identifier);
 		}
 	}
 
@@ -63,7 +64,11 @@ public class PeerConnection implements Runnable {
 		logger.log(Level.INFO, this.identifier + ":\n" + listOfSharedFilesResponse.toString());
 	}
 
-	public void requestListOfPeers() {
+	void recievedSharedFIleFragment(SharedFileFragmentResponse sharedFileFragmentResponse) {
+
+	}
+
+	void requestListOfPeers() {
 		try {
 			this.peerOutput.sendCommand(new ListOfPeersRequest());
 		} catch (IOException e) {
@@ -72,7 +77,7 @@ public class PeerConnection implements Runnable {
 		}
 	}
 
-	public void requestListOfSharedFiles() {
+	void requestListOfSharedFiles() {
 		try {
 			this.peerOutput.sendCommand(new ListOfSharedFilesRequest());
 		} catch (IOException e) {
@@ -81,7 +86,7 @@ public class PeerConnection implements Runnable {
 		}
 	}
 
-	public void sendInformationMessage(String message) {
+	void sendInformationMessage(String message) {
 		try {
 			this.peerOutput.sendCommand(new InformationMessage(message));
 		} catch (IOException e) {
@@ -90,7 +95,7 @@ public class PeerConnection implements Runnable {
 		}
 	}
 
-	public void sendListeningPort(int port) {
+	void sendListeningPort(int port) {
 		try {
 			this.peerOutput.sendCommand(new ListeningPort(port));
 		} catch (IOException e) {
@@ -99,12 +104,8 @@ public class PeerConnection implements Runnable {
 		}
 	}
 
-	public void terminate() {
+	void terminate() {
 		this.peerInput.terminate();
-	}
-
-	public void recievedSharedFIleFragment(SharedFileFragmentResponse sharedFileFragmentResponse) {
-
 	}
 
 }

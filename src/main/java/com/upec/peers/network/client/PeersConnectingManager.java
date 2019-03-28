@@ -32,6 +32,10 @@ public class PeersConnectingManager {
 		this.clientListener.listOfConnectionsChanged(getConnectionsIds());
 	}
 
+	public void sendMessageTo(String identifier, String message) {
+		this.connections.get(identifier).sendInformationMessage(message);
+	}
+
 	private Collection<String> getConnectionsIds() {
 		return connections.keySet();
 	}
@@ -47,8 +51,18 @@ public class PeersConnectingManager {
 	}
 
 	public void terminateConnections() {
-		this.connections.forEach((identifier, peerConnection) -> {
-			peerConnection.terminate();
-		});
+		this.connections.forEach((identifier, peerConnection) -> peerConnection.terminate());
+	}
+
+	public void askForListOfSharedFiles(String identifier) {
+		this.connections.get(identifier).requestListOfSharedFiles();
+	}
+
+	public void sendListeningPort(String identifier) {
+		this.connections.get(identifier).sendListeningPort(2020);
+	}
+
+	public void askForListOfPeers(String identifier) {
+		this.connections.get(identifier).requestListOfPeers();
 	}
 }

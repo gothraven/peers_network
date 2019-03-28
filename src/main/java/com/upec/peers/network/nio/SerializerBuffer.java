@@ -18,6 +18,10 @@ public class SerializerBuffer {
 		this.byteBuffer = byteBuffer;
 	}
 
+	public SerializerBuffer(byte[] bytes) {
+		this.byteBuffer = ByteBuffer.wrap(bytes);
+	}
+
 	public SerializerBuffer(int capacity) {
 		this.byteBuffer = ByteBuffer.allocate(capacity);
 	}
@@ -91,5 +95,21 @@ public class SerializerBuffer {
 
 	public void flip() {
 		this.byteBuffer.flip();
+	}
+
+	public boolean hasRemaining() {
+		return byteBuffer.hasRemaining();
+	}
+
+	public void clear() {
+		byteBuffer.clear();
+	}
+
+	public int limit() {
+		return byteBuffer.limit();
+	}
+
+	public int position() {
+		return byteBuffer.position();
 	}
 }
