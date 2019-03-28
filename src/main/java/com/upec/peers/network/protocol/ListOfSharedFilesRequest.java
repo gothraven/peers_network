@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
 
 public class ListOfSharedFilesRequest implements Serializable {
 
-    public static byte ID = 0x05;
+    public static final byte ID = 0x05;
 
     public static Creator<ListOfSharedFilesRequest> creator = byteBuffer -> new ListOfSharedFilesRequest();
 

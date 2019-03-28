@@ -3,11 +3,12 @@ package com.upec.peers.interfaces;
 import com.upec.peers.interfaces.dialogs.ConnexionDialog;
 import com.upec.peers.interfaces.dialogs.DownloadFile;
 import com.upec.peers.interfaces.dialogs.SendMessageDialog;
+import com.upec.peers.network.utils.NetworkObserver;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class PeerInterface extends JFrame{
+public class PeerInterface extends JFrame implements NetworkObserver {
     private JPanel rootPanel;
     private JPanel consolePanel;
     private JPanel peerListPanel;
@@ -44,7 +45,6 @@ public class PeerInterface extends JFrame{
         console.setBackground(Color.BLACK);
         console.setForeground(Color.LIGHT_GRAY);
         console.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-        console.append("WECOME HOME\n");
 
         connectButton.addActionListener(e -> {
             var dialog = new ConnexionDialog((address, port) -> System.out.println(address + " : " + port));

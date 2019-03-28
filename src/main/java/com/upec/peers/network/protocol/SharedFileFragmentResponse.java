@@ -5,10 +5,11 @@ import com.upec.peers.network.utils.Serializable;
 import com.upec.peers.network.nio.SerializerBuffer;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 
 public class SharedFileFragmentResponse implements Serializable {
 
-	public static byte ID = 0x08;
+	public static final byte ID = 0x08;
 
 	private String filename;
 	private long size;
@@ -65,5 +66,11 @@ public class SharedFileFragmentResponse implements Serializable {
 
 	public ByteBuffer getBlob() {
 		return blob;
+	}
+
+	@Override
+	public String toString() {
+		var blob = Charset.defaultCharset().decode(this.blob);
+		return filename + ", size: " + size + ", offset: " + offset + ", length: " + length + ", blob : [" + blob;
 	}
 }

@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
 
 public class SharedFileFragmentRequest implements Serializable {
 
-	public static byte ID = 0x07;
+	public static final byte ID = 0x07;
 
 	private String filename;
 	private long size;
