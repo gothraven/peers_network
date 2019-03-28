@@ -9,7 +9,7 @@ import java.nio.charset.Charset;
 
 public class SharedFileFragmentResponse implements Serializable {
 
-	public static final byte ID = 0x08;
+	public static final byte ID = (byte)8;
 
 	private String filename;
 	private long size;

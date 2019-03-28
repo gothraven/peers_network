@@ -11,7 +11,7 @@ import java.util.List;
 
 public class ListOfPeersResponse implements Serializable {
 
-	public static final byte ID = 0x04;
+	public static final byte ID = (byte)4;
 
 	private List<PeerAddress> peerAddresses;
 

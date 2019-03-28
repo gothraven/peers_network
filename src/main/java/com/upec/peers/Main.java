@@ -13,6 +13,6 @@ public class Main {
 		core.regesterObserver(peerInterface);
 		core.execute();
 //		core.instantiateConnection("localhost", 2020);
-		core.instantiateConnection("prog-reseau-m1.lacl.fr", 5486);
+//		core.instantiateConnection("prog-reseau-m1.lacl.fr", 5486);
 	}
 }

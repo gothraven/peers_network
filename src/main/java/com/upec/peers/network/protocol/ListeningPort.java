@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
 
 public class ListeningPort implements Serializable {
 
-    public static final byte ID = 0x02;
+    public static final byte ID = (byte)2;
 
     private int port;
 

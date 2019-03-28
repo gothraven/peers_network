@@ -29,28 +29,36 @@ class PeerInput {
 	}
 
 	void run() throws IOException, ServerNotActiveException {
+
+		// contains the not processed data
 		var dataStock = new LinkedList<Byte>();
-		var bytesRead = 0;
 
 		while (running) {
-			bytesRead = in.read(sb.getByteBuffer());
 
-			if (bytesRead < 0)
-				throw new ServerNotActiveException();
+			// read from the network
+			var bytesRead = in.read(sb.getByteBuffer());
 
-			if (bytesRead == 0 && dataStock.isEmpty())
-				continue;
+			// this means the server has left or shutdown
+			if (bytesRead < 0) throw new ServerNotActiveException();
 
+			// if we read nothing and there is nothing to process we ignore the rest
+			if (bytesRead == 0 && dataStock.isEmpty()) continue;
+
+			// flipping the buffer to read from it in case we wrote somethings in
 			sb.flip();
-			while (sb.hasRemaining()) {
-				dataStock.add(sb.readByte());
-			}
-			sb.flip();
+
+			// copy the bites from the buffer to the data stock
+			while (sb.hasRemaining()) dataStock.add(sb.readByte());
+
+			// clear the network buffer for the next turn
 			sb.clear();
 
+			// create a temporary buffer from the data stock to serialize it
 			var tsb = new SerializerBuffer(Bytes.toArray(dataStock));
 
 			try {
+
+				// get the command ID
 				byte commandId = tsb.readByte();
 
 				switch (commandId) {
@@ -79,7 +87,7 @@ class PeerInput {
 						this.context.recievedSharedFIleFragment(sharedFileFragmentResponse);
 						break;
 					default:
-						if (commandId >= 0x064 || commandId <= 0x0128)
+						if (commandId >= ((byte)64) || commandId <= ((byte)128))
 							tsb.ignoreObject(Extentions.consumer);
 						else
 							throw new ProtocolException("Command not right");

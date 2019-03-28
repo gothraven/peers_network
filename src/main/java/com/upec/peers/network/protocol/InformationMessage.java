@@ -9,7 +9,7 @@ import java.nio.ByteBuffer;
 
 public class InformationMessage implements Serializable {
 
-    public static final byte ID = 0x01;
+    public static final byte ID = (byte)1;
 
     private String message;
 
