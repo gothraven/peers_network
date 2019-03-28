@@ -11,22 +11,20 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
+
 
 public class PeerConnected {
 
     final private int BUFFER_SIZE = 512;
+    private PeersConnectedManager manager;
     private SocketChannel socketChannel;
     private SerializerBuffer serializerBuffer;
-    private List<PeerAddress> knownPeers;
 
 
-    public PeerConnected(SocketChannel sc) {
+    public PeerConnected(SocketChannel sc, PeersConnectedManager m) {
+        this.manager = m;
         this.socketChannel = sc;
-        this.knownPeers = Collections.synchronizedList(new ArrayList<>());
-        // UN proble d'intialisation
         this.serializerBuffer = new SerializerBuffer(ByteBuffer.allocate(BUFFER_SIZE));
     }
 
@@ -61,19 +59,32 @@ public class PeerConnected {
 
     public void response() {
         byte id = serializerBuffer.readByte();
-        if (MessageRequest.ID == id) {
-            var message = serializerBuffer.readObject(MessageRequest.creator);
-            System.out.println(socketChannel.socket().getPort() + " => " + message.getMessage());
-        } else if (ListeningPortRequest.ID == id) listeningPort();
-        else if (ListOfPeersRequest.ID == id) peersList();
-        else if (ListOfSharedFilesRequest.ID == id) fileList();
-        else if (SharedFileFragmentRequest.ID == id) sharedFragmentFile();
-        else if (id >= 64 && id <= 128) extensions();
-        else {
-            System.out.println("Error");
-            System.out.println("close Connexion");
+        switch (id) {
+            case InformationMessage.ID:
+                var message = serializerBuffer.readObject(InformationMessage.creator);
+                System.out.println(socketChannel.socket().getPort() + " => " + message.getMessage());
+                break;
+            case ListeningPortRequest.ID:
+                listeningPort();
+                break;
+            case ListOfPeersRequest.ID:
+                peersList();
+                break;
+            case ListOfSharedFilesRequest.ID:
+                fileList();
+                break;
+            case SharedFileFragmentRequest.ID:
+                sharedFragmentFile();
+                break;
+            default:
+                if (id >= 0x64 && id <= 0x128) {
+                    extensions();
+                    break;
+                }
+                System.out.println("Error");
+                System.out.println("close Connexion");
+                break;
         }
-        //writeData(MessageCommand.serialize("Hello back\n"), socketChannel);
     }
 
     public void sharedFragmentFile() {
@@ -87,11 +98,14 @@ public class PeerConnected {
     }
 
     public void extensions() {
+        serializerBuffer.readByte();
+        serializerBuffer.readInt();
+        serializerBuffer.readString();
         System.out.println("Message d'extensions ignore");
     }
 
     public void peersList() {
-        var response = new ListOfPeersResponse(knownPeers);
+        var response = new ListOfPeersResponse(manager.getKnownPeers());
         response.serialize();
         // send it
         try {
@@ -120,7 +134,9 @@ public class PeerConnected {
 
     public void listeningPort() {
         var port = serializerBuffer.readObject(ListeningPortRequest.creator);
-        knownPeers.add(new PeerAddress(port.getPort(), socketChannel.socket().getInetAddress().toString()));
+        var peers = manager.getKnownPeers();
+        peers.add(new PeerAddress(port.getPort(), socketChannel.socket().getInetAddress().toString()));
+        manager.setKnownPeers(peers);
         System.out.println(socketChannel.socket().getPort() + " => " + port.getPort());
     }
 

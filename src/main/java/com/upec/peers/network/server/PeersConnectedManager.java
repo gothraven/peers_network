@@ -1,5 +1,7 @@
 package com.upec.peers.network.server;
 
+import com.upec.peers.network.objects.PeerAddress;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -8,17 +10,15 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.HashMap;
+import java.util.*;
 
 public class PeersConnectedManager implements Runnable {
 	private ServerSocketChannel serverSocketChannel;
 	private Selector selector;
 	private ByteBuffer byteBuffer;
+	private List<PeerAddress> knownPeers;
+
 	private HashMap<SocketChannel, PeerConnected> connectedPeers;
-
-	private volatile boolean running;
-
-
 
 	public PeersConnectedManager(int listeningPort) throws IOException {
 
@@ -27,6 +27,7 @@ public class PeersConnectedManager implements Runnable {
 		this.byteBuffer = ByteBuffer.allocateDirect(10);
 		this.running = true;
 
+		this.knownPeers = Collections.synchronizedList(new ArrayList<>());
 		SocketAddress socketAddress = new InetSocketAddress(listeningPort);
 		serverSocketChannel.bind(socketAddress);
 		serverSocketChannel.configureBlocking(false);
@@ -35,12 +36,26 @@ public class PeersConnectedManager implements Runnable {
 
 	}
 
+	public Set<SocketChannel> getPeers() {
+		return connectedPeers.keySet();
+	}
+
+	public List<PeerAddress> getKnownPeers() {
+		return knownPeers;
+	}
+
+	private volatile boolean running;
+
+	public void setKnownPeers(List<PeerAddress> p) {
+		this.knownPeers = p;
+	}
+
 	private void accept() throws IOException {
 		SocketChannel sc = serverSocketChannel.accept();
 		System.out.println("Nouvelle connection" + sc);
 		sc.configureBlocking(false);
 		sc.register(selector, SelectionKey.OP_READ);
-		connectedPeers.put(sc, new PeerConnected(sc));
+		connectedPeers.put(sc, new PeerConnected(sc, this));
 	}
 
 	private void writeData(ByteBuffer response, SocketChannel channel) {
@@ -86,5 +101,9 @@ public class PeersConnectedManager implements Runnable {
 
 	public boolean isRunning() {
 		return running;
+	}
+
+	public void addKnownPeer(String s) {
+
 	}
 }
