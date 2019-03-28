@@ -77,7 +77,7 @@ public class PeerConnection implements Runnable {
 			this.peerOutput.sendCommand(new ListOfSharedFilesRequest());
 		} catch (IOException e) {
 			logger.log(Level.WARNING, e.getMessage());
-			terminate();
+			this.context.terminateConnection(this.identifier);
 		}
 	}
 
@@ -86,7 +86,7 @@ public class PeerConnection implements Runnable {
 			this.peerOutput.sendCommand(new InformationMessage(message));
 		} catch (IOException e) {
 			logger.log(Level.WARNING, e.getMessage());
-			terminate();
+			this.context.terminateConnection(this.identifier);
 		}
 	}
 
@@ -101,7 +101,6 @@ public class PeerConnection implements Runnable {
 
 	public void terminate() {
 		this.peerInput.terminate();
-		this.context.terminateConnection(this.identifier);
 	}
 
 	public void recievedSharedFIleFragment(SharedFileFragmentResponse sharedFileFragmentResponse) {

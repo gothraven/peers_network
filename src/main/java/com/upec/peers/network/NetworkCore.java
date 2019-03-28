@@ -14,10 +14,9 @@ public class NetworkCore implements NetworkObservable {
 	private PeersConnectedManager peersConnectedManager;
 	private PeersConnectingManager peersConnectingManager;
 	private NetworkInterface networkObserver;
-	private Logger logger;
+	private static Logger logger = Logger.getLogger("NetworkLogger");
 
 	public NetworkCore(int serverPort) throws IOException {
-		this.logger = Logger.getLogger("NetworkLogger");
 		this.peersConnectedManager = new PeersConnectedManager(serverPort, logger);
 		this.peersConnectingManager = new PeersConnectingManager(this, logger);
 		this.execute();
@@ -28,7 +27,6 @@ public class NetworkCore implements NetworkObservable {
 	}
 
 	public void shutDown() {
-		logger.log(Level.INFO, "Shuting down ...");
 		this.peersConnectedManager.terminate();
 		this.peersConnectingManager.terminateConnections();
 	}

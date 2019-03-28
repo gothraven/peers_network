@@ -42,6 +42,7 @@ public class PeersConnectingManager {
 
 	public void terminateConnection(String identifier) {
 		this.connections.get(identifier).terminate();
+		this.connections.remove(identifier);
 		this.clientListener.listOfConnectionsChanged(getConnectionsIds());
 	}
 

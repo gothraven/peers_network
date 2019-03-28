@@ -43,10 +43,11 @@ public class PeersConnectedManager implements Runnable {
 
 	private void accept() throws IOException {
 		SocketChannel sc = serverSocketChannel.accept();
-		System.out.println("Nouvelle connection" + sc);
-		sc.configureBlocking(false);
-		sc.register(selector, SelectionKey.OP_READ);
-		connectedPeers.put(sc, new PeerConnected(sc, this));
+		if (sc != null) {
+			sc.configureBlocking(false);
+			sc.register(selector, SelectionKey.OP_READ);
+			connectedPeers.put(sc, new PeerConnected(sc, this));
+		}
 	}
 //  ??
 	private void writeData(ByteBuffer response, SocketChannel channel) {
