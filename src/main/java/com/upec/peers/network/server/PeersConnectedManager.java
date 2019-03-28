@@ -1,6 +1,7 @@
 package com.upec.peers.network.server;
 
 import com.upec.peers.network.objects.PeerAddress;
+import com.upec.peers.network.utils.ServerListener;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -13,12 +14,14 @@ import java.nio.channels.SocketChannel;
 import java.util.*;
 
 public class PeersConnectedManager implements Runnable {
+
 	private ServerSocketChannel serverSocketChannel;
 	private Selector selector;
 	private ByteBuffer byteBuffer;
 	private List<PeerAddress> knownPeers;
-
 	private HashMap<SocketChannel, PeerConnected> connectedPeers;
+	private ServerListener serverListener;
+	private volatile boolean running;
 
 	public PeersConnectedManager(int listeningPort) throws IOException {
 
@@ -28,26 +31,11 @@ public class PeersConnectedManager implements Runnable {
 		this.running = true;
 
 		this.knownPeers = Collections.synchronizedList(new ArrayList<>());
+		connectedPeers = new HashMap<>();
 		SocketAddress socketAddress = new InetSocketAddress(listeningPort);
 		serverSocketChannel.bind(socketAddress);
 		serverSocketChannel.configureBlocking(false);
 		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
-		connectedPeers = new HashMap<>();
-
-	}
-
-	public Set<SocketChannel> getPeers() {
-		return connectedPeers.keySet();
-	}
-
-	public List<PeerAddress> getKnownPeers() {
-		return knownPeers;
-	}
-
-	private volatile boolean running;
-
-	public void setKnownPeers(List<PeerAddress> p) {
-		this.knownPeers = p;
 	}
 
 	private void accept() throws IOException {
@@ -104,6 +92,23 @@ public class PeersConnectedManager implements Runnable {
 	}
 
 	public void addKnownPeer(String s) {
-
+		// todo add to known peers list
 	}
+
+	public void regesterListener(ServerListener serverListener) {
+		this.serverListener = serverListener;
+	}
+
+	public Set<SocketChannel> getPeers() {
+		return connectedPeers.keySet();
+	}
+
+	public List<PeerAddress> getKnownPeers() {
+		return knownPeers;
+	}
+
+	public void setKnownPeers(List<PeerAddress> p) {
+		this.knownPeers = p;
+	}
+
 }

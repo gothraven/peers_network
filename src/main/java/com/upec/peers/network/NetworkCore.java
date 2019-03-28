@@ -7,15 +7,16 @@ import com.upec.peers.network.utils.NetworkObserver;
 
 import java.io.IOException;
 
-public class Core implements NetworkObservable {
+public class NetworkCore implements NetworkObservable {
 
 	private PeersConnectedManager peersConnectedManager;
 	private PeersConnectingManager peersConnectingManager;
 	private NetworkObserver networkObserver;
 
-	public Core(int listeningPort) throws IOException {
-		this.peersConnectedManager = new PeersConnectedManager(listeningPort);
+	public NetworkCore(int serverPort) throws IOException {
+		this.peersConnectedManager = new PeersConnectedManager(serverPort);
 		this.peersConnectingManager = new PeersConnectingManager(this);
+		this.execute();
 	}
 
 	public void execute() {
@@ -24,6 +25,7 @@ public class Core implements NetworkObservable {
 
 	public void instantiateConnection(String inetAddress, int port) {
 		try {
+			System.out.printf(inetAddress + ":" + port);
 			this.peersConnectingManager.connectTo(inetAddress, port);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -33,5 +35,7 @@ public class Core implements NetworkObservable {
 	@Override
 	public void regesterObserver(NetworkObserver observer) {
 		this.networkObserver = observer;
+		this.peersConnectedManager.regesterListener(observer);
+		this.peersConnectingManager.regesterListener(observer);
 	}
 }

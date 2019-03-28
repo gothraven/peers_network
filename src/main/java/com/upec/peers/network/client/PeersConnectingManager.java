@@ -1,19 +1,20 @@
 package com.upec.peers.network.client;
 
-import com.upec.peers.network.Core;
+import com.upec.peers.network.NetworkCore;
+import com.upec.peers.network.utils.ClientListener;
+import com.upec.peers.network.utils.NetworkObserver;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Set;
 
 public class PeersConnectingManager {
 
-	private Core conext;
+	private NetworkCore conext;
 	private HashMap<String, PeerConnection> connections;
+	private ClientListener clientListener;
 
-	public PeersConnectingManager(Core conext) {
+	public PeersConnectingManager(NetworkCore conext) {
 		this.conext = conext;
 		this.connections = new HashMap<>();
 	}
@@ -23,9 +24,14 @@ public class PeersConnectingManager {
 		var connection = new PeerConnection(this, inetAddress, port);
 		new Thread(connection).start();
 		this.connections.put(id, connection);
+		this.clientListener.listOfConnectionsChanged(getConnectionsIds());
 	}
 
 	public Collection<String> getConnectionsIds() {
 		return connections.keySet();
+	}
+
+	public void regesterListener(ClientListener clientListener) {
+		this.clientListener = clientListener;
 	}
 }

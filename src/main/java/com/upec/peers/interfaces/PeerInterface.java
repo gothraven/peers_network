@@ -3,10 +3,15 @@ package com.upec.peers.interfaces;
 import com.upec.peers.interfaces.dialogs.ConnexionDialog;
 import com.upec.peers.interfaces.dialogs.DownloadFile;
 import com.upec.peers.interfaces.dialogs.SendMessageDialog;
+import com.upec.peers.network.NetworkCore;
+import com.upec.peers.network.objects.PeerAddress;
 import com.upec.peers.network.utils.NetworkObserver;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Consumer;
 
 public class PeerInterface extends JFrame implements NetworkObserver {
     private JPanel rootPanel;
@@ -26,7 +31,9 @@ public class PeerInterface extends JFrame implements NetworkObserver {
     private JButton sendMessageButton;
     private JTextArea console;
 
-    public PeerInterface() {
+    private NetworkCore networkCore;
+
+    public PeerInterface(NetworkCore networkCore) {
         add(rootPanel);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(new Dimension(800, 400));
@@ -40,20 +47,21 @@ public class PeerInterface extends JFrame implements NetworkObserver {
         knownPeersListModal = new DefaultListModel<>();
         connectionsList.setModel(connectionsListModal);
         knownPeersList.setModel(knownPeersListModal);
-        connectionsListModal.addElement("test:123");
 
         console.setBackground(Color.BLACK);
         console.setForeground(Color.LIGHT_GRAY);
         console.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
 
         connectButton.addActionListener(e -> {
-            var dialog = new ConnexionDialog((address, port) -> System.out.println(address + " : " + port));
+            var dialog = new ConnexionDialog((address, port) -> {
+                networkCore.instantiateConnection(address, Integer.parseInt(port));
+            });
             dialog.setVisible(true);
-            this.connectionsListModal.addElement("here we go");
         });
 
         disconnectButton.addActionListener(e -> {
             if (! this.connectionsList.isSelectionEmpty()) {
+//                this.networkCore.terminateConnection();
                 JOptionPane.showMessageDialog(null, "You were disconnected", "Disconnected", JOptionPane.INFORMATION_MESSAGE);
             }
         });
@@ -83,5 +91,24 @@ public class PeerInterface extends JFrame implements NetworkObserver {
                 d.setVisible(true);
             }
         });
+
+        setVisible(true);
+    }
+
+    @Override
+    public void listOfConnectionsChanged(Collection<String> connections) {
+        this.connectionsListModal.clear();
+        connections.forEach(connection -> connectionsListModal.addElement(connection));
+    }
+
+    @Override
+    public void listOfKnowPeersChanged(List<PeerAddress> peerAddresses) {
+        this.knownPeersListModal.clear();
+        peerAddresses.forEach(peerAddress -> knownPeersListModal.addElement(peerAddress.toString()));
+    }
+
+    @Override
+    public void logInformations(String data) {
+        this.console.append(data);
     }
 }
