@@ -11,7 +11,7 @@ import java.util.List;
 
 public class ListOfSharedFilesResponse implements Serializable {
 
-    public static byte ID = 0x06;
+    public static final byte ID = 0x06;
 
     private List<SharedFile> listOfSharedFiles;
 

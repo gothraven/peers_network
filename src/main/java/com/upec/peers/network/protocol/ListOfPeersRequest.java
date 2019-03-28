@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
 
 public class ListOfPeersRequest implements Serializable {
 
-	public static byte ID = 0x03;
+	public static final byte ID = 0x03;
 
 	public static Creator<ListOfPeersRequest> creator = byteBuffer -> new ListOfPeersRequest();
 

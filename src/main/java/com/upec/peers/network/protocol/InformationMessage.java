@@ -7,18 +7,18 @@ import com.upec.peers.network.utils.Serializable;
 
 import java.nio.ByteBuffer;
 
-public class MessageRequest implements Serializable {
+public class InformationMessage implements Serializable {
 
-    public static byte ID = 0x01;
+    public static final byte ID = 0x01;
 
     private String message;
 
-    public static Creator<MessageRequest> creator = serializerBuffer -> {
+    public static Creator<InformationMessage> creator = serializerBuffer -> {
         var message = serializerBuffer.readString();
-        return new MessageRequest(message);
+        return new InformationMessage(message);
     };
 
-    public MessageRequest(String message) {
+    public InformationMessage(String message) {
         this.message = message;
     }
 
