@@ -14,7 +14,7 @@ public class NetworkCore implements NetworkObservable {
 	private PeersConnectedManager peersConnectedManager;
 	private PeersConnectingManager peersConnectingManager;
 	private NetworkInterface networkObserver;
-	private static Logger logger = Logger.getLogger("NetworkLogger");
+	private Logger logger = Logger.getLogger("NetworkLogger");
 
 	public NetworkCore(int serverPort) throws IOException {
 		this.peersConnectedManager = new PeersConnectedManager(serverPort, logger);
@@ -33,8 +33,8 @@ public class NetworkCore implements NetworkObservable {
 
 	public void instantiateConnection(String inetAddress, int port) {
 		try {
-			logger.log(Level.INFO, "Connectiong to " + inetAddress + ":" + port);
 			this.peersConnectingManager.connectTo(inetAddress, port);
+			logger.log(Level.INFO, "Connected to " + inetAddress + ":" + port);
 		} catch (IOException e) {
 			e.printStackTrace();
 			logger.log(Level.WARNING, "Failed to connect to " + inetAddress + ":" + port + "\n");
@@ -42,9 +42,8 @@ public class NetworkCore implements NetworkObservable {
 	}
 
 	public void terminateConnection(String identifier) {
-		logger.log(Level.INFO, "Closing connection with " + identifier + " ... ");
 		this.peersConnectingManager.terminateConnection(identifier);
-		logger.log(Level.INFO, "Connection closed !");
+		logger.log(Level.INFO, "Connection closed with " + identifier);
 	}
 
 	@Override
