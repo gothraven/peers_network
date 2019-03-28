@@ -1,14 +1,13 @@
 package com.upec.peers.network.client;
 
-import com.upec.peers.network.protocol.ListOfSharedFilesRequest;
-import com.upec.peers.network.protocol.SharedFileFragmentRequest;
+import com.upec.peers.network.utils.Serializable;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 
-public class PeerOutput {
+class PeerOutput {
 
 	private WritableByteChannel out;
 
@@ -16,12 +15,9 @@ public class PeerOutput {
 		this.out = Channels.newChannel(outputStream);
 	}
 
-	void someCommande() throws IOException {
-		var command = new ListOfSharedFilesRequest();
-//		var command = new SharedFileFragmentRequest("amrane.txt", 22, 0, 22);
+	void sendCommand(Serializable command) throws IOException {
 		var buffer = command.serialize();
 		buffer.flip();
 		out.write(buffer.getByteBuffer());
 	}
-
 }

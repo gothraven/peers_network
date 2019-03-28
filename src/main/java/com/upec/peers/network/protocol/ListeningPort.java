@@ -6,22 +6,22 @@ import com.upec.peers.network.nio.SerializerBuffer;
 
 import java.nio.ByteBuffer;
 
-public class ListeningPortRequest implements Serializable {
+public class ListeningPort implements Serializable {
 
     public static final byte ID = 0x02;
 
     private int port;
 
-    public static Creator<ListeningPortRequest> creator = serializerBuffer -> {
+    public static Creator<ListeningPort> creator = serializerBuffer -> {
         int port = serializerBuffer.readInt();
-        return new ListeningPortRequest(port);
+        return new ListeningPort(port);
     };
 
     public int getPort() {
         return this.port;
     }
 
-    public ListeningPortRequest(int port) {
+    public ListeningPort(int port) {
         this.port = port;
     }
 

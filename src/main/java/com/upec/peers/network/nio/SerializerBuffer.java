@@ -1,6 +1,7 @@
 package com.upec.peers.network.nio;
 
 
+import com.upec.peers.network.utils.ObjectConsumer;
 import com.upec.peers.network.utils.Creator;
 
 import java.nio.ByteBuffer;
@@ -73,6 +74,10 @@ public class SerializerBuffer {
 
 	public <T> T readObject(Creator<T> creator) {
 		return creator.construct(this);
+	}
+
+	public void ignoreObject(ObjectConsumer objectConsumer) {
+		objectConsumer.consume(this);
 	}
 
 	public ByteBuffer getByteBuffer() {

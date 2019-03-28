@@ -70,7 +70,7 @@ public class PeerConnected {
                 var message = serializerBuffer.readObject(InformationMessage.creator);
                 System.out.println(socketChannel.socket().getPort() + " => " + message.getMessage());
                 break;
-            case ListeningPortRequest.ID:
+            case ListeningPort.ID:
                 listeningPort();
                 break;
             case ListOfPeersRequest.ID:
@@ -141,7 +141,7 @@ public class PeerConnected {
     }
 
     public void listeningPort() {
-        var port = serializerBuffer.readObject(ListeningPortRequest.creator);
+        var port = serializerBuffer.readObject(ListeningPort.creator);
         var peers = manager.getKnownPeers();
         peers.add(new PeerAddress(port.getPort(), socketChannel.socket().getInetAddress().toString()));
         manager.setKnownPeers(peers);

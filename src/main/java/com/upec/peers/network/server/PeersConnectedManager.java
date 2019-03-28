@@ -12,6 +12,8 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PeersConnectedManager implements Runnable {
 
@@ -21,10 +23,11 @@ public class PeersConnectedManager implements Runnable {
 	private List<PeerAddress> knownPeers;
 	private HashMap<SocketChannel, PeerConnected> connectedPeers;
 	private ServerListener serverListener;
+	private Logger logger;
 	private volatile boolean running;
 
-	public PeersConnectedManager(int listeningPort) throws IOException {
-
+	public PeersConnectedManager(int serverPort, Logger logger) throws IOException {
+		this.logger = logger;
 		this.serverSocketChannel = ServerSocketChannel.open();
 		this.selector = Selector.open();
 		this.byteBuffer = ByteBuffer.allocateDirect(10);
@@ -32,7 +35,7 @@ public class PeersConnectedManager implements Runnable {
 
 		this.knownPeers = Collections.synchronizedList(new ArrayList<>());
 		connectedPeers = new HashMap<>();
-		SocketAddress socketAddress = new InetSocketAddress(listeningPort);
+		SocketAddress socketAddress = new InetSocketAddress(serverPort);
 		serverSocketChannel.bind(socketAddress);
 		serverSocketChannel.configureBlocking(false);
 		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
@@ -59,6 +62,7 @@ public class PeersConnectedManager implements Runnable {
 
 	@Override
 	public void run() {
+		logger.log(Level.INFO, "Server starting at : localhost:" + this.serverSocketChannel.socket().getLocalPort());
 		while (this.running) {
 			try {
 				selector.select();
