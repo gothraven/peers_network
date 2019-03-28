@@ -10,7 +10,7 @@ public class ListOfSharedFilesRequest implements Serializable {
 
     public static final byte ID = 0x05;
 
-    public static Creator<ListOfSharedFilesRequest> creator = byteBuffer -> new ListOfSharedFilesRequest();
+    public static final Creator<ListOfSharedFilesRequest> creator = byteBuffer -> new ListOfSharedFilesRequest();
 
     public ListOfSharedFilesRequest() {}
 

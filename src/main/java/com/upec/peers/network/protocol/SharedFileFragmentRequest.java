@@ -15,7 +15,7 @@ public class SharedFileFragmentRequest implements Serializable {
 	private long offset;
 	private int length;
 
-	public static Creator<SharedFileFragmentRequest> creator = serializerBuffer -> {
+	public static final Creator<SharedFileFragmentRequest> creator = serializerBuffer -> {
 		var filename = serializerBuffer.readString();
 		var size = serializerBuffer.readLong();
 		var offset = serializerBuffer.readLong();

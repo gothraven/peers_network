@@ -17,7 +17,7 @@ public class SharedFileFragmentResponse implements Serializable {
 	private int length;
 	private ByteBuffer blob;
 
-	public static Creator<SharedFileFragmentResponse> creator = serializerBuffer -> {
+	public static final Creator<SharedFileFragmentResponse> creator = serializerBuffer -> {
 		var filename = serializerBuffer.readString();
 		var size = serializerBuffer.readLong();
 		var offset = serializerBuffer.readLong();

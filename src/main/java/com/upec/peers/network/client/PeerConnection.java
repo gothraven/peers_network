@@ -1,10 +1,12 @@
 package com.upec.peers.network.client;
 
 
+import com.upec.peers.network.objects.PeerAddress;
 import com.upec.peers.network.protocol.*;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -68,10 +70,31 @@ public class PeerConnection implements Runnable {
 
 	}
 
+	public void recievedListOfPeersRequest() {
+		try {
+			this.peerOutput.sendCommand(new ListOfPeersResponse(new ArrayList<>()));
+		} catch (IOException e) {
+			e.printStackTrace();
+			logger.log(Level.WARNING, e.getMessage());
+			terminate();
+		}
+	}
+
+	public void recievedListOfSharedFilesRequest() {
+		try {
+			this.peerOutput.sendCommand(new ListOfSharedFilesResponse(new ArrayList<>()));
+		} catch (IOException e) {
+			e.printStackTrace();
+			logger.log(Level.WARNING, e.getMessage());
+			terminate();
+		}
+	}
+
 	void requestListOfPeers() {
 		try {
 			this.peerOutput.sendCommand(new ListOfPeersRequest());
 		} catch (IOException e) {
+			e.printStackTrace();
 			logger.log(Level.WARNING, e.getMessage());
 			terminate();
 		}
@@ -81,6 +104,7 @@ public class PeerConnection implements Runnable {
 		try {
 			this.peerOutput.sendCommand(new ListOfSharedFilesRequest());
 		} catch (IOException e) {
+			e.printStackTrace();
 			logger.log(Level.WARNING, e.getMessage());
 			this.context.terminateConnection(this.identifier);
 		}
@@ -90,6 +114,7 @@ public class PeerConnection implements Runnable {
 		try {
 			this.peerOutput.sendCommand(new InformationMessage(message));
 		} catch (IOException e) {
+			e.printStackTrace();
 			logger.log(Level.WARNING, e.getMessage());
 			this.context.terminateConnection(this.identifier);
 		}
@@ -99,6 +124,7 @@ public class PeerConnection implements Runnable {
 		try {
 			this.peerOutput.sendCommand(new ListeningPort(port));
 		} catch (IOException e) {
+			e.printStackTrace();
 			logger.log(Level.WARNING, e.getMessage());
 			terminate();
 		}
@@ -107,7 +133,6 @@ public class PeerConnection implements Runnable {
 	void terminate() {
 		this.peerInput.terminate();
 	}
-
 }
 
 

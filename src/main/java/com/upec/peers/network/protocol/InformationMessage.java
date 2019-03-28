@@ -13,7 +13,7 @@ public class InformationMessage implements Serializable {
 
     private String message;
 
-    public static Creator<InformationMessage> creator = serializerBuffer -> {
+    public static final Creator<InformationMessage> creator = serializerBuffer -> {
         var message = serializerBuffer.readString();
         return new InformationMessage(message);
     };

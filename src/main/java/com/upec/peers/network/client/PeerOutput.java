@@ -17,6 +17,7 @@ class PeerOutput {
 
 	void sendCommand(Serializable command) throws IOException {
 		var buffer = command.serialize();
+		System.out.println("sending " + command.getClass());
 		buffer.flip();
 		out.write(buffer.getByteBuffer());
 	}

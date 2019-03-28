@@ -8,16 +8,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ProtocolException;
 import java.nio.BufferUnderflowException;
-import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.rmi.ServerError;
 import java.rmi.server.ServerNotActiveException;
 import java.util.LinkedList;
 
 class PeerInput {
 
-	private static final int MAX_BUFF_SIZE = 1024;
+	private static final int MAX_BUFF_SIZE = 512;
 
 	private PeerConnection context;
 	private ReadableByteChannel in;
@@ -35,9 +33,6 @@ class PeerInput {
 		var bytesRead = 0;
 
 		while (running) {
-
-			sb.getByteBuffer().clear();
-			sb.flip();
 			bytesRead = in.read(sb.getByteBuffer());
 
 			if (bytesRead < 0)
@@ -46,44 +41,54 @@ class PeerInput {
 			if (bytesRead == 0 && dataStock.isEmpty())
 				continue;
 
-			while (bytesRead > 0) {
-				sb.flip();
-				while (sb.hasRemaining()) {
-					dataStock.add(sb.readByte());
-				}
-				sb.clear();
-				bytesRead = in.read(sb.getByteBuffer());
+			sb.flip();
+			while (sb.hasRemaining()) {
+				dataStock.add(sb.readByte());
 			}
+			sb.flip();
+			sb.clear();
 
 			var tsb = new SerializerBuffer(Bytes.toArray(dataStock));
 
 			try {
 				byte commandId = tsb.readByte();
+
 				switch (commandId) {
 					case InformationMessage.ID:
 						var informationMessage = tsb.readObject(InformationMessage.creator);
 						this.context.recievedMessage(informationMessage);
 						break;
+					case ListOfPeersRequest.ID:
+						tsb.readObject(ListOfPeersRequest.creator);
+						this.context.recievedListOfPeersRequest();
+						break;
 					case ListOfPeersResponse.ID:
 						var listOfPeersResponse = tsb.readObject(ListOfPeersResponse.creator);
 						this.context.recievedListOfPeers(listOfPeersResponse);
+						break;
+					case ListOfSharedFilesRequest.ID:
+						tsb.readObject(ListOfSharedFilesRequest.creator);
+						this.context.recievedListOfSharedFilesRequest();
+						break;
 					case ListOfSharedFilesResponse.ID:
 						var listOfSharedFilesResponse = tsb.readObject(ListOfSharedFilesResponse.creator);
 						this.context.recievedListOfSharedFiles(listOfSharedFilesResponse);
+						break;
 					case SharedFileFragmentResponse.ID:
 						var sharedFileFragmentResponse = tsb.readObject(SharedFileFragmentResponse.creator);
 						this.context.recievedSharedFIleFragment(sharedFileFragmentResponse);
+						break;
 					default:
-						if (commandId >= 0x64 || commandId <= 0x128)
+						if (commandId >= 0x064 || commandId <= 0x0128)
 							tsb.ignoreObject(Extentions.consumer);
 						else
 							throw new ProtocolException("Command not right");
-						break;
 				}
 				dataStock.clear();
 				while (tsb.hasRemaining()) {
 					dataStock.add(tsb.readByte());
 				}
+				tsb.clear();
 			} catch (BufferUnderflowException ignored) {}
 		}
 	}

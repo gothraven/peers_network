@@ -15,7 +15,7 @@ public class ListOfPeersResponse implements Serializable {
 
 	private List<PeerAddress> peerAddresses;
 
-	public static Creator<ListOfPeersResponse> creator = serializerBuffer -> {
+	public static final Creator<ListOfPeersResponse> creator = serializerBuffer -> {
 		int listLength = serializerBuffer.readInt();
 		List<PeerAddress> peerAddresses = new ArrayList<>();
 		for (int i = 0; i < listLength; i++) {

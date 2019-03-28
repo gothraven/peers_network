@@ -12,7 +12,7 @@ public class ListeningPort implements Serializable {
 
     private int port;
 
-    public static Creator<ListeningPort> creator = serializerBuffer -> {
+    public static final Creator<ListeningPort> creator = serializerBuffer -> {
         int port = serializerBuffer.readInt();
         return new ListeningPort(port);
     };

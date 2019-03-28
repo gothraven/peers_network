@@ -15,7 +15,7 @@ public class ListOfSharedFilesResponse implements Serializable {
 
     private List<SharedFile> listOfSharedFiles;
 
-    public static Creator<ListOfSharedFilesResponse> creator = serializerBuffer -> {
+    public static final Creator<ListOfSharedFilesResponse> creator = serializerBuffer -> {
         int listLength = serializerBuffer.readInt();
         List<SharedFile> listOfFiles = new ArrayList<>();
         for (int i = 0; i < listLength; i++) {
