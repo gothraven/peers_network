@@ -45,7 +45,7 @@ public class PeersConnectedManager implements Runnable {
 		sc.register(selector, SelectionKey.OP_READ);
 		connectedPeers.put(sc, new PeerConnected(sc, this));
 	}
-
+//  ??
 	private void writeData(ByteBuffer response, SocketChannel channel) {
 		response.flip();
 		while (response.hasRemaining()) {
@@ -93,6 +93,8 @@ public class PeersConnectedManager implements Runnable {
 
 	public void addKnownPeer(String s) {
 		// todo add to known peers list
+		knownPeers.add(new PeerAddress(50,s)) ;
+
 	}
 
 	public void regesterListener(ServerListener serverListener) {

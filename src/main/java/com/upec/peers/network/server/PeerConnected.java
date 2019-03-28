@@ -10,8 +10,14 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 public class PeerConnected {
@@ -115,21 +121,23 @@ public class PeerConnected {
         }
     }
 
-    public void fileList() {
-        File repository = new File("home/nadir");
-        var list = repository.listFiles();
+    public  void fileList() {
+        File repository = new File("/home/nadir/Téléchargements");
+        File [] list = repository.listFiles();
         var files = new ArrayList<SharedFile>();
         for (int i = 0; i < list.length; i++) {
-            files.add(new SharedFile(list[i].getName(), list[i].getTotalSpace()));
+            files.add(new SharedFile(list[i].getName(),list[i].getTotalSpace()));
         }
         var fileListRequest = new ListOfSharedFilesResponse(files);
         fileListRequest.serialize();
+
         //send it
         try {
             socketChannel.write(serializerBuffer.getByteBuffer());
         } catch (IOException e) {
             e.printStackTrace();
         }
+        // BUffer Size ,
     }
 
     public void listeningPort() {
@@ -138,6 +146,11 @@ public class PeerConnected {
         peers.add(new PeerAddress(port.getPort(), socketChannel.socket().getInetAddress().toString()));
         manager.setKnownPeers(peers);
         System.out.println(socketChannel.socket().getPort() + " => " + port.getPort());
+    }
+    public static void main (String [] args ){
+        // la taille du Buffer pour le taille des lists
+        // comportement bizzare , lors de chargenment du repertoire
+
     }
 
 }
