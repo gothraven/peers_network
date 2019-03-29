@@ -47,13 +47,6 @@ public class ConnexionDialog extends JDialog {
                 JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
-    public static void main(String[] args) {
-        ConnexionDialog dialog = new ConnexionDialog((s, s2) -> System.out.println(s + ":" + s2));
-        dialog.pack();
-        dialog.setVisible(true);
-        System.exit(0);
-    }
-
     private void onOK() {
         var address = this.address.getText();
         var port = this.port.getText();

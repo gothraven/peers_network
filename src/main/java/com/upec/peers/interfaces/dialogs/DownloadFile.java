@@ -42,13 +42,6 @@ public class DownloadFile extends JDialog {
                 JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
-    public static void main(String[] args) {
-        DownloadFile dialog = new DownloadFile(System.out :: println);
-        dialog.pack();
-        dialog.setVisible(true);
-        System.exit(0);
-    }
-
     private void onOK() {
         var fileName = this.fileName.getText();
         this.onActionOk.accept(fileName);

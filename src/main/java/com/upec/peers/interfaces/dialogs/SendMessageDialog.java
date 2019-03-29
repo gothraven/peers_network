@@ -38,13 +38,6 @@ public class SendMessageDialog extends JDialog {
                 JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
-    public static void main(String[] args) {
-        SendMessageDialog dialog = new SendMessageDialog(System.out :: println);
-        dialog.pack();
-        dialog.setVisible(true);
-        System.exit(0);
-    }
-
     private void onOK() {
         var message = this.messageTextArea.getText();
         this.onActionOk.accept(message);

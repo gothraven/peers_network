@@ -34,6 +34,7 @@ public class NetworkInterface extends JFrame implements NetworkObserver {
     private JButton sendMessageButton;
     private JTextArea console;
     private JButton sendListeningPortButton;
+    private JButton clearButton;
 
     private NetworkCore networkCore;
 
@@ -54,7 +55,7 @@ public class NetworkInterface extends JFrame implements NetworkObserver {
         this.networkCore = networkCore;
         add(rootPanel);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(new Dimension(800, 400));
+        setSize(new Dimension(1200, 600));
 
         consolePanel.setPreferredSize(new Dimension(400, 600));
         peerListPanel.setPreferredSize(new Dimension(150, 600));
@@ -65,6 +66,12 @@ public class NetworkInterface extends JFrame implements NetworkObserver {
         knownPeersListModal = new DefaultListModel<>();
         connectionsList.setModel(connectionsListModal);
         knownPeersList.setModel(knownPeersListModal);
+
+        rootPanel.setBorder(BorderFactory.createTitledBorder("Peers Network Interface"));
+        actionListPanel.setBorder(BorderFactory.createTitledBorder("Actions"));
+        consolePanel.setBorder(BorderFactory.createTitledBorder("Client Console"));
+        connectionsList.setBorder(BorderFactory.createTitledBorder("Connections List"));
+        knownPeersList.setBorder(BorderFactory.createTitledBorder("Known Peers List"));
 
         console.setBackground(Color.BLACK);
         console.setForeground(Color.LIGHT_GRAY);
@@ -119,6 +126,10 @@ public class NetworkInterface extends JFrame implements NetworkObserver {
                 var identifier = this.connectionsListModal.get(this.connectionsList.getSelectedIndex());
                 this.networkCore.sendListeningPort(identifier);
             }
+        });
+
+        clearButton.addActionListener(e -> {
+            this.console.setText("");
         });
 
         addWindowListener(new WindowAdapter() {
