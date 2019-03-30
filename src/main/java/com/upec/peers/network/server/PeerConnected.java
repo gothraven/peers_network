@@ -8,6 +8,7 @@ import com.upec.peers.network.protocol.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ProtocolException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
@@ -23,7 +24,7 @@ import java.util.stream.Stream;
 
 public class PeerConnected {
 
-    final private int BUFFER_SIZE = 512;
+    private static final int BUFFER_SIZE = 512;
     private PeersConnectedManager manager;
     private SocketChannel socketChannel;
     private SerializerBuffer serializerBuffer;
@@ -66,7 +67,7 @@ public class PeerConnected {
     }
 
 
-    public void response() {
+    public void response() throws ProtocolException {
         byte id = serializerBuffer.readByte();
         switch (id) {
             case InformationMessage.ID:
@@ -86,13 +87,10 @@ public class PeerConnected {
                 sharedFragmentFile();
                 break;
             default:
-                if (id >= 0x64 && id <= 0x128) {
+                if (id >= ((byte)64) || id <= ((byte)128))
                     extensions();
-                    break;
-                }
-                System.out.println("Error");
-                System.out.println("close Connexion");
-                break;
+                else
+                    throw new ProtocolException("Command not right");
         }
     }
 

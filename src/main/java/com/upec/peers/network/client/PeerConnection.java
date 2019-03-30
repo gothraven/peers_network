@@ -1,7 +1,6 @@
 package com.upec.peers.network.client;
 
 
-import com.upec.peers.network.objects.PeerAddress;
 import com.upec.peers.network.protocol.*;
 
 import java.io.IOException;
@@ -44,6 +43,7 @@ public class PeerConnection implements Runnable {
 	@Override
 	public void run() {
 		try {
+
 			peerInput = new PeerInput(this, socket.getInputStream());
 			peerOutput = new PeerOutput(socket.getOutputStream());
 			peerInput.run();
