@@ -97,7 +97,7 @@ public class PeersConnectedManager implements Runnable {
 	}
 
 	void recievedListeningPort(ListeningPort listeningPort, PeerConnected peer) {
-		var newKnownPeer = new PeerAddress(listeningPort.getPort(), peer.getSocketChannel().socket().getInetAddress().toString());
+		var newKnownPeer = new PeerAddress(listeningPort.getPort(), peer.getSocketChannel().socket().getInetAddress().getHostName());
 		this.dataBase.addKnownPeer(newKnownPeer);
 	}
 
