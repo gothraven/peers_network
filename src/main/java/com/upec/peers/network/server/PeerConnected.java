@@ -61,6 +61,7 @@ class PeerConnected {
         try {
 
             byte id = tsb.readByte();
+
             switch (id) {
                 case InformationMessage.ID:
                     var informationMessage = tsb.readObject(InformationMessage.creator);
@@ -90,9 +91,7 @@ class PeerConnected {
             }
 
             dataStock.clear();
-            while (tsb.hasRemaining()) {
-                dataStock.add(tsb.readByte());
-            }
+            while (tsb.hasRemaining()) dataStock.add(tsb.readByte());
             tsb.clear();
 
         } catch (BufferUnderflowException ignored) {

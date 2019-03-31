@@ -40,7 +40,6 @@ public class PeerConnection implements Runnable {
 	@Override
 	public void run() {
 		try {
-
 			peerInput = new PeerInput(this, socket.getInputStream());
 			peerOutput = new PeerOutput(socket.getOutputStream());
 			peerInput.run();
@@ -78,9 +77,9 @@ public class PeerConnection implements Runnable {
 			terminate();
 		}
 
-		if (offset + length == size) {
+		if (offset + length == size)
 			logger.log(Level.INFO, "Download finished " + fileName);
-		} else {
+		else {
 			long sizeLeft = size - (offset + length);
 			offset += length;
 			length = 65536 <= sizeLeft ? 65536 : (int) sizeLeft;

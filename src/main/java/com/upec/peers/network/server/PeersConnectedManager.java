@@ -38,6 +38,7 @@ public class PeersConnectedManager implements Runnable {
 		serverSocketChannel.bind(socketAddress);
 		serverSocketChannel.configureBlocking(false);
 		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+
 	}
 
 	private void accept() throws IOException {
@@ -45,6 +46,7 @@ public class PeersConnectedManager implements Runnable {
 		sc.configureBlocking(false);
 		sc.register(selector, SelectionKey.OP_READ);
 		connectedPeers.put(sc, new PeerConnected(sc, this));
+		logger.log(Level.INFO, "Client connected from " + sc.getRemoteAddress().toString());
 	}
 
 	@Override
@@ -61,7 +63,7 @@ public class PeersConnectedManager implements Runnable {
 						try {
 							this.connectedPeers.get(channel).read();
 						} catch (ClientNotActive e) {
-							e.printStackTrace();
+							logger.log(Level.INFO, "Client left : " + channel.getRemoteAddress().toString());
 							channel.close();
 							sk.cancel();
 						}
