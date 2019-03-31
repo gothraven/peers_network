@@ -15,7 +15,7 @@ import java.util.LinkedList;
 
 class PeerInput {
 
-	private static final int MAX_BUFF_SIZE = 512;
+	private static final int MAX_BUFF_SIZE = 1024;
 
 	private PeerConnection context;
 	private ReadableByteChannel in;
@@ -84,7 +84,7 @@ class PeerInput {
 						break;
 					case SharedFileFragmentResponse.ID:
 						var sharedFileFragmentResponse = tsb.readObject(SharedFileFragmentResponse.creator);
-						this.context.recievedSharedFIleFragment(sharedFileFragmentResponse);
+						this.context.recievedSharedFileFragment(sharedFileFragmentResponse);
 						break;
 					default:
 						if (commandId >= ((byte)64) || commandId <= ((byte)128))

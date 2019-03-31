@@ -7,13 +7,14 @@ import com.upec.peers.network.nio.SerializerBuffer;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class ListOfPeersResponse implements Serializable {
 
 	public static final byte ID = (byte)4;
 
-	private List<PeerAddress> peerAddresses;
+	private Collection<PeerAddress> peerAddresses;
 
 	public static final Creator<ListOfPeersResponse> creator = serializerBuffer -> {
 		int listLength = serializerBuffer.readInt();
@@ -26,7 +27,7 @@ public class ListOfPeersResponse implements Serializable {
 		return new ListOfPeersResponse(peerAddresses);
 	};
 
-	public ListOfPeersResponse(List<PeerAddress> peerAddresses) {
+	public ListOfPeersResponse(Collection<PeerAddress> peerAddresses) {
 		this.peerAddresses = peerAddresses;
 	}
 
@@ -42,7 +43,7 @@ public class ListOfPeersResponse implements Serializable {
 		return searlizerBuffer;
 	}
 
-	public List<PeerAddress> getPeerAddresses() {
+	public Collection<PeerAddress> getPeerAddresses() {
 		return peerAddresses;
 	}
 

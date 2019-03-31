@@ -1,9 +1,13 @@
 package com.upec.peers.network.client;
 
 import com.upec.peers.network.NetworkCore;
+import com.upec.peers.network.database.DataBase;
+import com.upec.peers.network.objects.PeerAddress;
 import com.upec.peers.network.utils.ClientListener;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.logging.Logger;
@@ -13,11 +17,13 @@ public class PeersConnectingManager {
 	private NetworkCore conext;
 	private HashMap<String, PeerConnection> connections;
 	private ClientListener clientListener;
+	private DataBase dataBase;
 	private Logger logger;
 
-	public PeersConnectingManager(NetworkCore conext, Logger logger) {
+	public PeersConnectingManager(NetworkCore conext, DataBase dataBase, Logger logger) {
 		this.conext = conext;
 		this.logger = logger;
+		this.dataBase = dataBase;
 		this.connections = new HashMap<>();
 	}
 
@@ -77,5 +83,13 @@ public class PeersConnectingManager {
 		if (connection != null) {
 			connection.downloadAFile(fileName, size);
 		}
+	}
+
+	void putFragmentInFile(String fileName, long size, long offset, int length, ByteBuffer blob) throws IOException, URISyntaxException {
+		this.dataBase.putFileFragment(fileName, size, offset, length, blob);
+	}
+
+	void putIntoListOfKnowPeers(Collection<PeerAddress> peerAddresses) {
+		this.dataBase.addKnowPeers(peerAddresses);
 	}
 }

@@ -66,7 +66,7 @@ public class SerializerBuffer {
 	}
 
 	public void writeByteBuffer(ByteBuffer byteBuffer) {
-		byteBuffer.put(byteBuffer);
+		this.byteBuffer.put(byteBuffer);
 	}
 
 	public ByteBuffer readToByteBuffer(int length) {

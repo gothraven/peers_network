@@ -6,12 +6,17 @@ import com.upec.peers.network.NetworkCore;
 import com.upec.peers.network.nio.SerializerBuffer;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.io.File;
 import java.text.MessageFormat;
 
 public class Main {
@@ -22,26 +27,27 @@ public class Main {
 		var peerInterface = new NetworkInterface(core);
 		core.regesterObserver(peerInterface);
 		core.execute();
-//		core.instantiateConnection("localhost", 2020);
-		core.instantiateConnection("prog-reseau-m1.lacl.fr", 5486);
-
-//		String fname = "id_emojie_key.pub";
-//		var bb = getBytesFromFile(fname, 24, 20, 51);
-//		var s = Charset.defaultCharset().decode(bb);
-//		System.out.println(s);
+		core.instantiateConnection("localhost", 2020);
+//		core.instantiateConnection("prog-reseau-m1.lacl.fr", 5486);
 
 	}
 
-	public static ByteBuffer getBytesFromFile(String file, long size, int start, int length) throws IOException {
-		byte[] bytes = new byte[length];
-		URL sharedFold = ClassLoader.getSystemResource("shared/" + file);
-		var inputStream = sharedFold.openStream();
-		inputStream.skip(start);
-		inputStream.read(bytes);
-		return ByteBuffer.wrap(bytes);
-	}
-
-	public static void putBytesInFile(String file, long size, long start, int length, ByteBuffer Blob) {
-
+	/**
+	 * Reads the relative path to the resource directory from the <code>RESOURCE_PATH</code> file located in
+	 * <code>src/main/resources</code>
+	 * @return the relative path to the <code>resources</code> in the file system, or
+	 *         <code>null</code> if there was an error
+	 */
+	private static String getResourcePath() {
+		try {
+			URI resourcePathFile = System.class.getResource("/RESOURCE_PATH").toURI();
+			String resourcePath = Files.readAllLines(Paths.get(resourcePathFile)).get(0);
+			URI rootURI = new File("").toURI();
+			URI resourceURI = new File(resourcePath).toURI();
+			URI relativeResourceURI = rootURI.relativize(resourceURI);
+			return relativeResourceURI.getPath();
+		} catch (Exception e) {
+			return null;
+		}
 	}
 }

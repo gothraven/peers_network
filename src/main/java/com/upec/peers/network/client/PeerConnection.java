@@ -5,6 +5,8 @@ import com.upec.peers.network.protocol.*;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -59,15 +61,42 @@ public class PeerConnection implements Runnable {
 	}
 
 	void recievedListOfPeers(ListOfPeersResponse listOfPeersResponse) {
-		logger.log(Level.INFO, this.identifier + ":\n" + listOfPeersResponse.toString());
+		this.context.putIntoListOfKnowPeers(listOfPeersResponse.getPeerAddresses());
 	}
 
 	void recievedListOfSharedFiles(ListOfSharedFilesResponse listOfSharedFilesResponse) {
 		logger.log(Level.INFO, this.identifier + ":\n" + listOfSharedFilesResponse.toString());
 	}
 
-	void recievedSharedFIleFragment(SharedFileFragmentResponse sharedFileFragmentResponse) {
+	void recievedSharedFileFragment(SharedFileFragmentResponse sharedFileFragmentResponse) {
+		String fileName = sharedFileFragmentResponse.getFilename();
+		long size = sharedFileFragmentResponse.getSize();
+		long offset = sharedFileFragmentResponse.getOffset();
+		int length = sharedFileFragmentResponse.getLength();
+		ByteBuffer blob = sharedFileFragmentResponse.getBlob();
 
+		try {
+			this.context.putFragmentInFile(fileName, size, offset, length, blob);
+		} catch (IOException | URISyntaxException e) {
+			e.printStackTrace();
+			logger.log(Level.WARNING, e.getMessage());
+			terminate();
+		}
+
+		if (offset + length == size) {
+			logger.log(Level.INFO, "Download finished " + fileName);
+		} else {
+			long sizeLeft = size - (offset + length);
+			offset += length;
+			length = 65536 <= sizeLeft ? 65536 : (int) sizeLeft;
+			var command = new SharedFileFragmentRequest(fileName, size, offset, length);
+			try {
+				System.out.println("==>>" + command);
+				peerOutput.sendCommand(command);
+			} catch (IOException  e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	void recievedListOfPeersRequest() {
@@ -131,20 +160,13 @@ public class PeerConnection implements Runnable {
 	}
 
 	void downloadAFile(String fileName, long size) {
-		long offset = 0;
 		int length = 65536 <= size ? 65536 : (int) size;
-		long sizeLeft = size;
-		while (sizeLeft > 0) {
-			try {
-				this.peerOutput.sendCommand(new SharedFileFragmentRequest(fileName, size, offset, length));
-			} catch (IOException e) {
-				e.printStackTrace();
-				logger.log(Level.WARNING, e.getMessage());
-				terminate();
-			}
-			sizeLeft -= length;
-			offset += length;
-			length = 65536 <= sizeLeft ? 65536 : (int) sizeLeft;
+		var command = new SharedFileFragmentRequest(fileName, size, 0, length);
+		System.out.println("First Command Send==>>" + command);
+		try {
+			peerOutput.sendCommand(command);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 

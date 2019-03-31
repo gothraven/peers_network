@@ -11,6 +11,22 @@ public class PeerAddress {
         this.url = url;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null)
+            return false;
+        if (obj.getClass() != this.getClass())
+            return false;
+        PeerAddress that = (PeerAddress) obj;
+        return that.url.equals(this.url)
+                && that.port == this.port;
+    }
+
+    @Override
+    public int hashCode() {
+        return url.hashCode() + port;
+    }
+
     public int getPort() {
         return this.port;
     }

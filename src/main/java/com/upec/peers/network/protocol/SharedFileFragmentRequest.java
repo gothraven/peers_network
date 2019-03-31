@@ -56,4 +56,9 @@ public class SharedFileFragmentRequest implements Serializable {
 	public int getLength() {
 		return length;
 	}
+
+	@Override
+	public String toString() {
+		return filename + ", size: " + size + ", offset: " + offset + ", length: " + length;
+	}
 }

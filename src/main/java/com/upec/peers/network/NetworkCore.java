@@ -2,6 +2,7 @@ package com.upec.peers.network;
 
 import com.upec.peers.interfaces.NetworkInterface;
 import com.upec.peers.network.client.PeersConnectingManager;
+import com.upec.peers.network.database.DataBase;
 import com.upec.peers.network.server.PeersConnectedManager;
 import com.upec.peers.network.utils.NetworkObservable;
 
@@ -14,14 +15,15 @@ public class NetworkCore implements NetworkObservable {
 	private int serverPort;
 	private PeersConnectedManager peersConnectedManager;
 	private PeersConnectingManager peersConnectingManager;
+	private DataBase dataBase;
 	private NetworkInterface networkObserver;
 	private Logger logger = Logger.getLogger("NetworkLogger");
 
 	public NetworkCore(int serverPort) throws IOException {
 		this.serverPort = serverPort;
-		this.peersConnectedManager = new PeersConnectedManager(serverPort, logger);
-		this.peersConnectingManager = new PeersConnectingManager(this, logger);
-		this.execute();
+		this.dataBase = new DataBase();
+		this.peersConnectedManager = new PeersConnectedManager(serverPort, dataBase, logger);
+		this.peersConnectingManager = new PeersConnectingManager(this, dataBase, logger);
 	}
 
 	@Override

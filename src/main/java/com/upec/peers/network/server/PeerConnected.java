@@ -5,16 +5,21 @@ import com.upec.peers.network.nio.SerializerBuffer;
 import com.upec.peers.network.objects.PeerAddress;
 import com.upec.peers.network.objects.SharedFile;
 import com.upec.peers.network.protocol.*;
+import com.upec.peers.network.utils.ClientNotActive;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.ProtocolException;
+import java.net.URISyntaxException;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.rmi.ServerException;
+import java.rmi.server.ServerNotActiveException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,128 +29,101 @@ import java.util.stream.Stream;
 
 public class PeerConnected {
 
-    private static final int BUFFER_SIZE = 512;
+    private static final int BUFFER_SIZE = 1024;
     private PeersConnectedManager manager;
     private SocketChannel socketChannel;
     private SerializerBuffer serializerBuffer;
+    private LinkedList<Byte> dataStock;
 
 
-    public PeerConnected(SocketChannel sc, PeersConnectedManager m) {
-        this.manager = m;
+
+    PeerConnected(SocketChannel sc, PeersConnectedManager manager) {
+        this.manager = manager;
         this.socketChannel = sc;
         this.serializerBuffer = new SerializerBuffer(ByteBuffer.allocate(BUFFER_SIZE));
+        this.dataStock = new LinkedList<>();
     }
 
-    public void read(SelectionKey sk) throws IOException {
+    void read() throws IOException, ClientNotActive {
 
-        int bytesRead = socketChannel.read(serializerBuffer.getByteBuffer());
-        LinkedList<Byte> byteLinkedList = new LinkedList<>();
-        if (bytesRead < 0) {
-            System.out.println("Client Left");
-            sk.cancel();
-            socketChannel.close();
-            return;
-        }
-        if (bytesRead == 0) return;
+        // read from the network
+        var bytesRead = socketChannel.read(serializerBuffer.getByteBuffer());
+
+        // this means the server has left or shutdown
+        if (bytesRead < 0) throw new ClientNotActive();
+
+        // if we read nothing and there is nothing to process we ignore the rest
+        if (bytesRead == 0 && dataStock.isEmpty()) return;
 
         while (bytesRead > 0) {
+
+            // flipping the buffer to read from it in case we wrote somethings in
             serializerBuffer.flip();
-            while (serializerBuffer.getByteBuffer().hasRemaining()) {
-                byteLinkedList.add(serializerBuffer.getByteBuffer().get());
-            }
-            serializerBuffer.getByteBuffer().clear();
+
+            while (serializerBuffer.hasRemaining()) dataStock.add(serializerBuffer.readByte());
+
+            // clear the network buffer for the next turn
+            serializerBuffer.clear();
+
             bytesRead = socketChannel.read(serializerBuffer.getByteBuffer());
         }
-        byte[] bytes = Bytes.toArray(byteLinkedList);
-        ByteBuffer.wrap(bytes);
+
+        // create a temporary buffer from the data stock to serialize it
+        var tsb = new SerializerBuffer(Bytes.toArray(dataStock));
+
         try {
-            response();
-        } catch (Exception e) {
+
+            byte id = tsb.readByte();
+            switch (id) {
+                case InformationMessage.ID:
+                    var informationMessage = tsb.readObject(InformationMessage.creator);
+                    this.manager.recievedMessage(informationMessage, this);
+                    break;
+                case ListeningPort.ID:
+                    var listeningPort = tsb.readObject(ListeningPort.creator);
+                    this.manager.recievedListeningPort(listeningPort, this);
+                    break;
+                case ListOfPeersRequest.ID:
+                    tsb.readObject(ListOfPeersRequest.creator);
+                    this.manager.recievedListOfPeersRequest(this);
+                    break;
+                case ListOfSharedFilesRequest.ID:
+                    tsb.readObject(ListOfSharedFilesRequest.creator);
+                    this.manager.recievedListOfSharedFilesRequest(this);
+                    break;
+                case SharedFileFragmentRequest.ID:
+                    var sharedFileFragmentRequest = tsb.readObject(SharedFileFragmentRequest.creator);
+                    this.manager.recievedSharedFileFragmentRequest(sharedFileFragmentRequest, this);
+                    break;
+                default:
+                    if (id >= ((byte)64) || id <= ((byte)128))
+                        tsb.ignoreObject(Extentions.consumer);
+                    else
+                        throw new ProtocolException("Command is not right");
+            }
+
+            dataStock.clear();
+            while (tsb.hasRemaining()) {
+                dataStock.add(tsb.readByte());
+            }
+            tsb.clear();
+
+        } catch (BufferUnderflowException ignored) {
+            ignored.printStackTrace();
+        } catch (ProtocolException | URISyntaxException | ServerException e) {
             e.printStackTrace();
-//			serverError(stringWriter.toString(), socketChannel);
+			serverError(e.getMessage());
         }
     }
 
-
-    public void response() throws ProtocolException {
-        byte id = serializerBuffer.readByte();
-        switch (id) {
-            case InformationMessage.ID:
-                var message = serializerBuffer.readObject(InformationMessage.creator);
-                System.out.println(socketChannel.socket().getPort() + " => " + message.getMessage());
-                break;
-            case ListeningPort.ID:
-                listeningPort();
-                break;
-            case ListOfPeersRequest.ID:
-                peersList();
-                break;
-            case ListOfSharedFilesRequest.ID:
-                fileList();
-                break;
-            case SharedFileFragmentRequest.ID:
-                sharedFragmentFile();
-                break;
-            default:
-                if (id >= ((byte)64) || id <= ((byte)128))
-                    extensions();
-                else
-                    throw new ProtocolException("Command not right");
-        }
+    private void serverError(String wrong_command) throws IOException {
+        var error_message = new InformationMessage(wrong_command);
+        var buffer = error_message.serialize();
+        buffer.flip();
+        socketChannel.write(buffer.getByteBuffer());
     }
 
-    public void sharedFragmentFile() {
-        var fragementFile = serializerBuffer.readObject(SharedFileFragmentResponse.creator);
-        fragementFile.serialize();
-        try {
-            socketChannel.write(serializerBuffer.getByteBuffer());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void extensions() {
-        serializerBuffer.readByte();
-        serializerBuffer.readInt();
-        serializerBuffer.readString();
-        System.out.println("Message d'extensions ignore");
-    }
-
-    public void peersList() {
-        var response = new ListOfPeersResponse(manager.getKnownPeers());
-        response.serialize();
-        // send it
-        try {
-            socketChannel.write(serializerBuffer.getByteBuffer());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public  void fileList() {
-        File repository = new File("/home/nadir/Téléchargements");
-        File [] list = repository.listFiles();
-        var files = new ArrayList<SharedFile>();
-        for (int i = 0; i < list.length; i++) {
-            files.add(new SharedFile(list[i].getName(),list[i].getTotalSpace()));
-        }
-        var fileListRequest = new ListOfSharedFilesResponse(files);
-        fileListRequest.serialize();
-
-        //send it
-        try {
-            socketChannel.write(serializerBuffer.getByteBuffer());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        // BUffer Size ,
-    }
-
-    public void listeningPort() {
-        var port = serializerBuffer.readObject(ListeningPort.creator);
-        var peers = manager.getKnownPeers();
-        peers.add(new PeerAddress(port.getPort(), socketChannel.socket().getInetAddress().toString()));
-        manager.setKnownPeers(peers);
-        System.out.println(socketChannel.socket().getPort() + " => " + port.getPort());
+    SocketChannel getSocketChannel() {
+        return socketChannel;
     }
 }
