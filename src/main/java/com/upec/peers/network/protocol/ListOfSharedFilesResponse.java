@@ -5,7 +5,6 @@ import com.upec.peers.network.utils.Serializable;
 import com.upec.peers.network.objects.SharedFile;
 import com.upec.peers.network.nio.SerializerBuffer;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +31,10 @@ public class ListOfSharedFilesResponse implements Serializable {
 
     @Override
     public SerializerBuffer serialize() {
-        SerializerBuffer serializerBuffer = new SerializerBuffer(ByteBuffer.allocate(512));
+        int bufferSize = 1 + 4;
+        for (SharedFile listOfSharedFile : listOfSharedFiles)
+            bufferSize = bufferSize + 4 + listOfSharedFile.getName().getBytes().length + 8;
+        SerializerBuffer serializerBuffer = new SerializerBuffer(bufferSize);
         serializerBuffer.writeByte(ID);
         serializerBuffer.writeInt(listOfSharedFiles.size());
         for (SharedFile listOfSharedFile : listOfSharedFiles) {
@@ -40,10 +42,6 @@ public class ListOfSharedFilesResponse implements Serializable {
             serializerBuffer.writeLong(listOfSharedFile.getSize());
         }
         return serializerBuffer;
-    }
-
-    public List<SharedFile> getListOfSharedFiles() {
-        return listOfSharedFiles;
     }
 
     @Override

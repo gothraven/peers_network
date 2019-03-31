@@ -6,7 +6,6 @@ import com.upec.peers.network.objects.SharedFile;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.io.File;
 

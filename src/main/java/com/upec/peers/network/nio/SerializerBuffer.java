@@ -60,7 +60,7 @@ public class SerializerBuffer {
 
 	public String readString(){
 		int size = byteBuffer.getInt();
-		byte[] bytes = new byte[size];;
+		byte[] bytes = new byte[size];
 		byteBuffer.get(bytes);
 		return new String(bytes);
 	}
@@ -103,13 +103,5 @@ public class SerializerBuffer {
 
 	public void clear() {
 		byteBuffer.clear();
-	}
-
-	public int limit() {
-		return byteBuffer.limit();
-	}
-
-	public int position() {
-		return byteBuffer.position();
 	}
 }

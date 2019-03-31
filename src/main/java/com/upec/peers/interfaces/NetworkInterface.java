@@ -12,7 +12,6 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Collection;
-import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
@@ -131,9 +130,7 @@ public class NetworkInterface extends JFrame implements NetworkObserver {
             }
         });
 
-        clearButton.addActionListener(e -> {
-            this.console.setText("");
-        });
+        clearButton.addActionListener(e -> this.console.setText(""));
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -155,11 +152,6 @@ public class NetworkInterface extends JFrame implements NetworkObserver {
     public void listOfKnowPeersChanged(Collection<PeerAddress> peerAddresses) {
         this.knownPeersListModal.clear();
         peerAddresses.forEach(peerAddress -> knownPeersListModal.addElement(peerAddress.toString()));
-    }
-
-    @Override
-    public void logInformations(String data) {
-        this.console.append(data);
     }
 
     public Handler getLogHandler() {

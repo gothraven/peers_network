@@ -7,7 +7,6 @@ import com.upec.peers.network.utils.ClientNotActive;
 
 import java.io.IOException;
 import java.net.ProtocolException;
-import java.net.URISyntaxException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
@@ -97,7 +96,7 @@ class PeerConnected {
             tsb.clear();
 
         } catch (BufferUnderflowException ignored) {
-        } catch (ProtocolException | URISyntaxException | ServerException e) {
+        } catch (ProtocolException | ServerException e) {
             e.printStackTrace();
 			serverError(e.getMessage());
         }

@@ -4,7 +4,6 @@ import com.upec.peers.network.utils.Creator;
 import com.upec.peers.network.utils.Serializable;
 import com.upec.peers.network.nio.SerializerBuffer;
 
-import java.nio.ByteBuffer;
 
 public class ListeningPort implements Serializable {
 
@@ -27,7 +26,7 @@ public class ListeningPort implements Serializable {
 
     @Override
     public SerializerBuffer serialize() {
-        SerializerBuffer searlizerBuffer = new SerializerBuffer(ByteBuffer.allocate(512));
+        SerializerBuffer searlizerBuffer = new SerializerBuffer(1 + 4);
         searlizerBuffer.writeByte(ID);
         searlizerBuffer.writeInt(port);
         return searlizerBuffer;

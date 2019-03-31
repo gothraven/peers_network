@@ -5,7 +5,6 @@ import com.upec.peers.network.objects.PeerAddress;
 import com.upec.peers.network.utils.Serializable;
 import com.upec.peers.network.nio.SerializerBuffer;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,7 +32,10 @@ public class ListOfPeersResponse implements Serializable {
 
 	@Override
 	public SerializerBuffer serialize() {
-		SerializerBuffer searlizerBuffer = new SerializerBuffer(ByteBuffer.allocate(512));
+		int bufferSize = 1 + 4;
+		for (PeerAddress peerAddress : peerAddresses)
+			bufferSize = bufferSize + 8 + peerAddress.getUrl().getBytes().length;
+		SerializerBuffer searlizerBuffer = new SerializerBuffer(bufferSize);
 		searlizerBuffer.writeByte(ID);
 		searlizerBuffer.writeInt(peerAddresses.size());
 		for (PeerAddress peerAddress : peerAddresses) {
@@ -45,10 +47,6 @@ public class ListOfPeersResponse implements Serializable {
 
 	public Collection<PeerAddress> getPeerAddresses() {
 		return peerAddresses;
-	}
-
-	public void setPeerAddresses(List<PeerAddress> peerAddresses) {
-		this.peerAddresses = peerAddresses;
 	}
 
 	@Override

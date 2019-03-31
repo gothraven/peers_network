@@ -4,12 +4,10 @@ import com.upec.peers.network.database.DataBase;
 import com.upec.peers.network.objects.PeerAddress;
 import com.upec.peers.network.protocol.*;
 import com.upec.peers.network.utils.ClientNotActive;
-import com.upec.peers.network.utils.ServerListener;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -25,7 +23,6 @@ public class PeersConnectedManager implements Runnable {
 	private Selector selector;
 	private DataBase dataBase;
 	private HashMap<SocketChannel, PeerConnected> connectedPeers;
-	private ServerListener serverListener;
 	private Logger logger;
 	private volatile boolean running;
 
@@ -87,17 +84,13 @@ public class PeersConnectedManager implements Runnable {
 		}
 	}
 
-	public void regesterListener(ServerListener serverListener) {
-		this.serverListener = serverListener;
-	}
-
 	void recievedMessage(InformationMessage message, PeerConnected peer) throws IOException {
 		logger.log(Level.INFO, peer.getSocketChannel().getRemoteAddress().toString() + "'s message :");
 		logger.log(Level.INFO, message.getMessage());
 	}
 
 	void recievedListeningPort(ListeningPort listeningPort, PeerConnected peer) {
-		var newKnownPeer = new PeerAddress(listeningPort.getPort(), peer.getSocketChannel().socket().getInetAddress().getHostAddress());
+		var newKnownPeer = new PeerAddress(listeningPort.getPort(), peer.getSocketChannel().socket().getInetAddress().toString());
 		this.dataBase.addKnownPeer(newKnownPeer);
 	}
 
@@ -115,7 +108,7 @@ public class PeersConnectedManager implements Runnable {
 		peer.getSocketChannel().write(data);
 	}
 
-	void recievedSharedFileFragmentRequest(SharedFileFragmentRequest sharedFileFragmentRequest, PeerConnected peer) throws IOException, URISyntaxException {
+	void recievedSharedFileFragmentRequest(SharedFileFragmentRequest sharedFileFragmentRequest, PeerConnected peer) throws IOException {
 		String fileName = sharedFileFragmentRequest.getFilename();
 		long size = sharedFileFragmentRequest.getSize();
 		long offset = sharedFileFragmentRequest.getOffset();

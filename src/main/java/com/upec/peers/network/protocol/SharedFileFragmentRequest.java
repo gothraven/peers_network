@@ -4,7 +4,6 @@ import com.upec.peers.network.utils.Creator;
 import com.upec.peers.network.utils.Serializable;
 import com.upec.peers.network.nio.SerializerBuffer;
 
-import java.nio.ByteBuffer;
 
 public class SharedFileFragmentRequest implements Serializable {
 
@@ -32,7 +31,7 @@ public class SharedFileFragmentRequest implements Serializable {
 
 	@Override
 	public SerializerBuffer serialize() {
-		SerializerBuffer searlizerBuffer = new SerializerBuffer(ByteBuffer.allocate(512));
+		SerializerBuffer searlizerBuffer = new SerializerBuffer(1 + 4 + filename.getBytes().length + 8 + 8 + 4);
 		searlizerBuffer.writeByte(ID);
 		searlizerBuffer.writeString(filename);
 		searlizerBuffer.writeLong(size);

@@ -29,7 +29,6 @@ public class NetworkCore implements NetworkObservable {
 	public void regesterObserver(NetworkInterface observer) {
 		this.logger.addHandler(observer.getLogHandler());
 		this.dataBase.regesterListener(observer);
-		this.peersConnectedManager.regesterListener(observer);
 		this.peersConnectingManager.regesterListener(observer);
 	}
 

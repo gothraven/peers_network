@@ -4,7 +4,6 @@ import com.upec.peers.network.utils.Creator;
 import com.upec.peers.network.utils.Serializable;
 import com.upec.peers.network.nio.SerializerBuffer;
 
-import java.nio.ByteBuffer;
 
 public class ListOfSharedFilesRequest implements Serializable {
 
@@ -16,7 +15,7 @@ public class ListOfSharedFilesRequest implements Serializable {
 
     @Override
     public SerializerBuffer serialize() {
-        SerializerBuffer serializerBuffer = new SerializerBuffer(ByteBuffer.allocate(1));
+        SerializerBuffer serializerBuffer = new SerializerBuffer(1);
         serializerBuffer.writeByte(ID);
         return serializerBuffer;
     }
