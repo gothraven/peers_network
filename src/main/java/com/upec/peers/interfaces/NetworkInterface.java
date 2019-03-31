@@ -106,7 +106,10 @@ public class NetworkInterface extends JFrame implements NetworkObserver {
 
         downloadButton.addActionListener(e -> {
             if (! this.connectionsList.isSelectionEmpty()) {
-                var dialog = new DownloadFile(fileName -> System.out.println("file: " + fileName));
+	            var dialog = new DownloadFile((fileName, fileSize) -> {
+		            var identifier = this.connectionsListModal.get(this.connectionsList.getSelectedIndex());
+		            this.networkCore.downloadAFile(identifier, fileName, Long.parseLong(fileSize));
+	            });
                 dialog.setVisible(true);
             }
         });

@@ -45,7 +45,6 @@ public class SendMessageDialog extends JDialog {
     }
 
     private void onCancel() {
-        this.messageTextArea.setText("");
         dispose();
     }
 }

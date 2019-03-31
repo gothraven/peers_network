@@ -5,24 +5,28 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 public class DownloadFile extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
-    private JTextField fileName;
-    private Consumer<String> onActionOk;
+    private JTextField fileNameTextField;
+    private JFormattedTextField fileSizeTextField;
+    private BiConsumer<String, String> onActionOk;
 
-    public DownloadFile(Consumer<String> onActionOk) {
+    public DownloadFile(BiConsumer<String, String> onActionOk) {
         this.onActionOk = onActionOk;
         setContentPane(contentPane);
-        setSize(300, 120);
+        setSize(300, 200);
         setTitle("DOWNLOAD");
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-        fileName.setBackground(Color.white);
-        fileName.setBorder(BorderFactory.createTitledBorder("SharedFile name"));
+        fileNameTextField.setBackground(Color.white);
+        fileNameTextField.setBorder(BorderFactory.createTitledBorder("file name"));
+
+        fileSizeTextField.setBackground(Color.white);
+        fileSizeTextField.setBorder(BorderFactory.createTitledBorder("file size"));
 
         buttonOK.addActionListener(e -> onOK());
         buttonCancel.addActionListener(e -> onCancel());
@@ -43,13 +47,14 @@ public class DownloadFile extends JDialog {
     }
 
     private void onOK() {
-        var fileName = this.fileName.getText();
-        this.onActionOk.accept(fileName);
+        var fileName = this.fileNameTextField.getText();
+        var fileSize = this.fileSizeTextField.getText();
+        this.onActionOk.accept(fileName, fileSize);
         dispose();
     }
 
     private void onCancel() {
-        fileName.replaceSelection("");
         dispose();
     }
+
 }

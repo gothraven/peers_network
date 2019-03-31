@@ -55,8 +55,6 @@ public class ConnexionDialog extends JDialog {
     }
 
     private void onCancel() {
-        this.address.setText("");
-        this.port.setText("");
         dispose();
     }
 }
