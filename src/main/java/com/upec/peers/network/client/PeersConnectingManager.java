@@ -1,14 +1,11 @@
 package com.upec.peers.network.client;
 
 import com.upec.peers.network.NetworkCore;
-import com.upec.peers.network.protocol.InformationMessage;
 import com.upec.peers.network.utils.ClientListener;
-import com.upec.peers.network.utils.NetworkObserver;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 
 public class PeersConnectingManager {
@@ -55,14 +52,30 @@ public class PeersConnectingManager {
 	}
 
 	public void askForListOfSharedFiles(String identifier) {
-		this.connections.get(identifier).requestListOfSharedFiles();
+		var connection = this.connections.get(identifier);
+		if (connection != null) {
+			connection.requestListOfSharedFiles();
+		}
 	}
 
-	public void sendListeningPort(String identifier) {
-		this.connections.get(identifier).sendListeningPort(2020);
+	public void sendListeningPort(String identifier, int port) {
+		var connection = this.connections.get(identifier);
+		if (connection != null) {
+			connection.sendListeningPort(port);
+		}
 	}
 
 	public void askForListOfPeers(String identifier) {
-		this.connections.get(identifier).requestListOfPeers();
+		var connection = this.connections.get(identifier);
+		if (connection != null) {
+			connection.requestListOfPeers();
+		}
+	}
+
+	public void downloadAFile(String identifier, String fileName, long size) {
+		var connection = this.connections.get(identifier);
+		if (connection != null) {
+			connection.downloadAFile(fileName, size);
+		}
 	}
 }

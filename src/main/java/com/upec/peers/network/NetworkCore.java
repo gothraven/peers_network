@@ -1,8 +1,8 @@
 package com.upec.peers.network;
 
 import com.upec.peers.interfaces.NetworkInterface;
-import com.upec.peers.network.server.PeersConnectedManager;
 import com.upec.peers.network.client.PeersConnectingManager;
+import com.upec.peers.network.server.PeersConnectedManager;
 import com.upec.peers.network.utils.NetworkObservable;
 
 import java.io.IOException;
@@ -11,12 +11,14 @@ import java.util.logging.Logger;
 
 public class NetworkCore implements NetworkObservable {
 
+	private int serverPort;
 	private PeersConnectedManager peersConnectedManager;
 	private PeersConnectingManager peersConnectingManager;
 	private NetworkInterface networkObserver;
 	private Logger logger = Logger.getLogger("NetworkLogger");
 
 	public NetworkCore(int serverPort) throws IOException {
+		this.serverPort = serverPort;
 		this.peersConnectedManager = new PeersConnectedManager(serverPort, logger);
 		this.peersConnectingManager = new PeersConnectingManager(this, logger);
 		this.execute();
@@ -63,10 +65,14 @@ public class NetworkCore implements NetworkObservable {
 	}
 
 	public void sendListeningPort(String identifier) {
-		this.peersConnectingManager.sendListeningPort(identifier);
+		this.peersConnectingManager.sendListeningPort(identifier, serverPort);
 	}
 
 	public void askForListOfPeers(String identifier) {
 		this.peersConnectingManager.askForListOfPeers(identifier);
+	}
+
+	public void downloadAFile(String identifier, String fileName, long size) {
+		this.peersConnectingManager.downloadAFile(identifier, fileName, size);
 	}
 }

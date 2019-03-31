@@ -70,7 +70,7 @@ public class PeerConnection implements Runnable {
 
 	}
 
-	public void recievedListOfPeersRequest() {
+	void recievedListOfPeersRequest() {
 		try {
 			this.peerOutput.sendCommand(new ListOfPeersResponse(new ArrayList<>()));
 		} catch (IOException e) {
@@ -80,7 +80,7 @@ public class PeerConnection implements Runnable {
 		}
 	}
 
-	public void recievedListOfSharedFilesRequest() {
+	void recievedListOfSharedFilesRequest() {
 		try {
 			this.peerOutput.sendCommand(new ListOfSharedFilesResponse(new ArrayList<>()));
 		} catch (IOException e) {
@@ -127,6 +127,24 @@ public class PeerConnection implements Runnable {
 			e.printStackTrace();
 			logger.log(Level.WARNING, e.getMessage());
 			terminate();
+		}
+	}
+
+	void downloadAFile(String fileName, long size) {
+		long offset = 0;
+		int length = 65536 <= size ? 65536 : (int) size;
+		long sizeLeft = size;
+		while (sizeLeft > 0) {
+			try {
+				this.peerOutput.sendCommand(new SharedFileFragmentRequest(fileName, size, offset, length));
+			} catch (IOException e) {
+				e.printStackTrace();
+				logger.log(Level.WARNING, e.getMessage());
+				terminate();
+			}
+			sizeLeft -= length;
+			offset += length;
+			length = 65536 <= sizeLeft ? 65536 : (int) sizeLeft;
 		}
 	}
 
