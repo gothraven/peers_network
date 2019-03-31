@@ -5,7 +5,6 @@ import com.upec.peers.network.protocol.*;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -14,15 +13,13 @@ import java.util.logging.Logger;
 /**
  * PeerConnection is a class to handle connection to another peer
  *
- * @version 1.5
+ * @version 2.1
  */
 public class PeerConnection implements Runnable {
 
 	private PeersConnectingManager context;
 	private PeerInput peerInput;
 	private PeerOutput peerOutput;
-	private String inetAddress;
-	private int port;
 	private Logger logger;
 	private Socket socket;
 	private String identifier;
@@ -36,8 +33,6 @@ public class PeerConnection implements Runnable {
 	PeerConnection(PeersConnectingManager context, String inetAddress, int port, Logger logger) throws IOException {
 		this.logger = logger;
 		this.context = context;
-		this.inetAddress = inetAddress;
-		this.port = port;
 		this.identifier = inetAddress + ":" + port;
 		this.socket = new Socket(inetAddress, port);
 	}
@@ -76,8 +71,8 @@ public class PeerConnection implements Runnable {
 		ByteBuffer blob = sharedFileFragmentResponse.getBlob();
 
 		try {
-			this.context.putFragmentInFile(fileName, size, offset, length, blob);
-		} catch (IOException | URISyntaxException e) {
+			this.context.putFragmentInFile(fileName, blob);
+		} catch (IOException e) {
 			e.printStackTrace();
 			logger.log(Level.WARNING, e.getMessage());
 			terminate();
@@ -91,10 +86,11 @@ public class PeerConnection implements Runnable {
 			length = 65536 <= sizeLeft ? 65536 : (int) sizeLeft;
 			var command = new SharedFileFragmentRequest(fileName, size, offset, length);
 			try {
-				System.out.println("==>>" + command);
 				peerOutput.sendCommand(command);
 			} catch (IOException  e) {
 				e.printStackTrace();
+				logger.log(Level.WARNING, e.getMessage());
+				terminate();
 			}
 		}
 	}
@@ -162,11 +158,12 @@ public class PeerConnection implements Runnable {
 	void downloadAFile(String fileName, long size) {
 		int length = 65536 <= size ? 65536 : (int) size;
 		var command = new SharedFileFragmentRequest(fileName, size, 0, length);
-		System.out.println("First Command Send==>>" + command);
 		try {
 			peerOutput.sendCommand(command);
 		} catch (IOException e) {
 			e.printStackTrace();
+			logger.log(Level.WARNING, e.getMessage());
+			terminate();
 		}
 	}
 

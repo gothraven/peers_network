@@ -120,7 +120,6 @@ public class PeersConnectedManager implements Runnable {
 		long size = sharedFileFragmentRequest.getSize();
 		long offset = sharedFileFragmentRequest.getOffset();
 		int length = sharedFileFragmentRequest.getLength();
-		System.out.println("<<==" + sharedFileFragmentRequest);
 		if (length <= 65536) {
 			ByteBuffer blob = this.dataBase.getFileFragment(fileName, size, offset, length);
 			var response = new SharedFileFragmentResponse(fileName, size, offset, length, blob);

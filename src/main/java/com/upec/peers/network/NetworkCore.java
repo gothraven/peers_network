@@ -16,20 +16,19 @@ public class NetworkCore implements NetworkObservable {
 	private PeersConnectedManager peersConnectedManager;
 	private PeersConnectingManager peersConnectingManager;
 	private DataBase dataBase;
-	private NetworkInterface networkObserver;
 	private Logger logger = Logger.getLogger("NetworkLogger");
 
 	public NetworkCore(int serverPort) throws IOException {
 		this.serverPort = serverPort;
 		this.dataBase = new DataBase();
 		this.peersConnectedManager = new PeersConnectedManager(serverPort, dataBase, logger);
-		this.peersConnectingManager = new PeersConnectingManager(this, dataBase, logger);
+		this.peersConnectingManager = new PeersConnectingManager(dataBase, logger);
 	}
 
 	@Override
 	public void regesterObserver(NetworkInterface observer) {
-		this.networkObserver = observer;
 		this.logger.addHandler(observer.getLogHandler());
+		this.dataBase.regesterListener(observer);
 		this.peersConnectedManager.regesterListener(observer);
 		this.peersConnectingManager.regesterListener(observer);
 	}

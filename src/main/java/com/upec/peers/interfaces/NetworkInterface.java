@@ -152,7 +152,7 @@ public class NetworkInterface extends JFrame implements NetworkObserver {
     }
 
     @Override
-    public void listOfKnowPeersChanged(List<PeerAddress> peerAddresses) {
+    public void listOfKnowPeersChanged(Collection<PeerAddress> peerAddresses) {
         this.knownPeersListModal.clear();
         peerAddresses.forEach(peerAddress -> knownPeersListModal.addElement(peerAddress.toString()));
     }

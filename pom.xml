@@ -6,7 +6,7 @@
 
     <groupId>com.upec.peers</groupId>
     <artifactId>peers</artifactId>
-    <version>1.2.4</version>
+    <version>1.6</version>
     <dependencies>
         <dependency>
             <groupId>com.google.guava</groupId>

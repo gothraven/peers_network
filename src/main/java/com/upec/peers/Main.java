@@ -13,4 +13,5 @@ public class Main {
 		core.regesterObserver(peerInterface);
 		core.execute();
 	}
+
 }

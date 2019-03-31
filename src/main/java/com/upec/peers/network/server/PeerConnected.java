@@ -2,32 +2,20 @@ package com.upec.peers.network.server;
 
 import com.google.common.primitives.Bytes;
 import com.upec.peers.network.nio.SerializerBuffer;
-import com.upec.peers.network.objects.PeerAddress;
-import com.upec.peers.network.objects.SharedFile;
 import com.upec.peers.network.protocol.*;
 import com.upec.peers.network.utils.ClientNotActive;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.ProtocolException;
 import java.net.URISyntaxException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.rmi.ServerException;
-import java.rmi.server.ServerNotActiveException;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
-public class PeerConnected {
+class PeerConnected {
 
     private static final int BUFFER_SIZE = 1024;
     private PeersConnectedManager manager;
@@ -109,7 +97,6 @@ public class PeerConnected {
             tsb.clear();
 
         } catch (BufferUnderflowException ignored) {
-            ignored.printStackTrace();
         } catch (ProtocolException | URISyntaxException | ServerException e) {
             e.printStackTrace();
 			serverError(e.getMessage());
