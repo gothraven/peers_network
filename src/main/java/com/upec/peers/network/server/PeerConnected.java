@@ -16,7 +16,6 @@ import java.util.LinkedList;
 
 class PeerConnected {
 
-    private static final int BUFFER_SIZE = 1024;
     private PeersConnectedManager manager;
     private SocketChannel socketChannel;
     private SerializerBuffer serializerBuffer;
@@ -24,10 +23,10 @@ class PeerConnected {
 
 
 
-    PeerConnected(SocketChannel sc, PeersConnectedManager manager) {
+    PeerConnected(SocketChannel sc, PeersConnectedManager manager, SerializerBuffer serializerBuffer) {
         this.manager = manager;
         this.socketChannel = sc;
-        this.serializerBuffer = new SerializerBuffer(ByteBuffer.allocate(BUFFER_SIZE));
+        this.serializerBuffer = serializerBuffer;
         this.dataStock = new LinkedList<>();
     }
 

@@ -1,6 +1,7 @@
 package com.upec.peers.network.server;
 
 import com.upec.peers.network.database.DataBase;
+import com.upec.peers.network.nio.SerializerBuffer;
 import com.upec.peers.network.objects.PeerAddress;
 import com.upec.peers.network.protocol.*;
 import com.upec.peers.network.utils.ClientNotActive;
@@ -19,9 +20,12 @@ import java.util.logging.Logger;
 
 public class PeersConnectedManager implements Runnable {
 
+	private static final int BUFFER_SIZE = 16384;
+
 	private ServerSocketChannel serverSocketChannel;
 	private Selector selector;
 	private DataBase dataBase;
+	private SerializerBuffer globalBuffer;
 	private HashMap<SocketChannel, PeerConnected> connectedPeers;
 	private Logger logger;
 	private volatile boolean running;
@@ -32,6 +36,7 @@ public class PeersConnectedManager implements Runnable {
 		this.serverSocketChannel = ServerSocketChannel.open();
 		this.selector = Selector.open();
 		this.running = true;
+		this.globalBuffer = new SerializerBuffer(BUFFER_SIZE);
 
 		connectedPeers = new HashMap<>();
 		SocketAddress socketAddress = new InetSocketAddress(serverPort);
@@ -45,7 +50,7 @@ public class PeersConnectedManager implements Runnable {
 		SocketChannel sc = serverSocketChannel.accept();
 		sc.configureBlocking(false);
 		sc.register(selector, SelectionKey.OP_READ);
-		connectedPeers.put(sc, new PeerConnected(sc, this));
+		connectedPeers.put(sc, new PeerConnected(sc, this, this.globalBuffer));
 		logger.log(Level.INFO, "Client connected from " + sc.getRemoteAddress().toString());
 	}
 

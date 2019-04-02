@@ -15,12 +15,12 @@ import java.util.LinkedList;
 
 class PeerInput {
 
-	private static final int MAX_BUFF_SIZE = 1024;
+	private static final int MAX_BUFF_SIZE = 65536;
 
 	private PeerConnection context;
 	private ReadableByteChannel in;
 	private SerializerBuffer sb = new SerializerBuffer(MAX_BUFF_SIZE);
-	private boolean running;
+	private volatile boolean running;
 
 	PeerInput(PeerConnection context, InputStream inputStream) {
 		this.context = context;

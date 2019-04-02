@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 /**
  * PeerConnection is a class to handle connection to another peer
  *
- * @version 2.1
+ * @version 2.3
  */
 public class PeerConnection implements Runnable {
 
