@@ -6,13 +6,8 @@
 
     <groupId>com.upec.peers</groupId>
     <artifactId>peers</artifactId>
-    <version>1.6</version>
+    <version>1.9</version>
     <dependencies>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>19.0</version>
-        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

@@ -1,11 +1,11 @@
 package com.upec.peers.network.nio;
 
 
-import com.upec.peers.network.utils.ObjectConsumer;
 import com.upec.peers.network.utils.Creator;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.function.Consumer;
 
 
 public class SerializerBuffer {
@@ -80,8 +80,8 @@ public class SerializerBuffer {
 		return creator.construct(this);
 	}
 
-	public void ignoreObject(ObjectConsumer objectConsumer) {
-		objectConsumer.consume(this);
+	public void ignoreObject(Consumer<SerializerBuffer> objectConsumer) {
+		objectConsumer.accept(this);
 	}
 
 	public ByteBuffer getByteBuffer() {

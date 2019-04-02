@@ -1,6 +1,6 @@
 package com.upec.peers.network.server;
 
-import com.google.common.primitives.Bytes;
+import com.upec.peers.network.nio.Bytes;
 import com.upec.peers.network.nio.SerializerBuffer;
 import com.upec.peers.network.protocol.*;
 import com.upec.peers.network.utils.ClientNotActive;
@@ -8,19 +8,22 @@ import com.upec.peers.network.utils.ClientNotActive;
 import java.io.IOException;
 import java.net.ProtocolException;
 import java.nio.BufferUnderflowException;
-import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.rmi.ServerException;
 import java.util.LinkedList;
 
 
+/**
+ * PeerConnected is a class to handle connections coming from anther peer
+ *
+ * @version 2.3
+ */
 class PeerConnected {
 
     private PeersConnectedManager manager;
     private SocketChannel socketChannel;
     private SerializerBuffer serializerBuffer;
     private LinkedList<Byte> dataStock;
-
 
 
     PeerConnected(SocketChannel sc, PeersConnectedManager manager, SerializerBuffer serializerBuffer) {
@@ -96,7 +99,7 @@ class PeerConnected {
         } catch (BufferUnderflowException ignored) {
         } catch (ProtocolException | ServerException e) {
             e.printStackTrace();
-			serverError(e.getMessage());
+            serverError(e.getMessage());
         }
     }
 
