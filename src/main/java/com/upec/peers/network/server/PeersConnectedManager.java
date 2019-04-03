@@ -5,6 +5,7 @@ import com.upec.peers.network.nio.SerializerBuffer;
 import com.upec.peers.network.objects.PeerAddress;
 import com.upec.peers.network.protocol.*;
 import com.upec.peers.network.utils.ClientNotActive;
+import com.upec.peers.network.utils.Serializable;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -103,16 +104,12 @@ public class PeersConnectedManager implements Runnable {
 
 	void recievedListOfPeersRequest(PeerConnected peer) throws IOException {
         var response = new ListOfPeersResponse(this.dataBase.getKnownPeers());
-		var data = response.serialize().getByteBuffer();
-		data.flip();
-        peer.getSocketChannel().write(data);
+		this.sendCommand(response, peer);
 	}
 
 	void recievedListOfSharedFilesRequest(PeerConnected peer) throws IOException {
 		var response = new ListOfSharedFilesResponse(this.dataBase.getSharedFiles());
-		var data = response.serialize().getByteBuffer();
-		data.flip();
-		peer.getSocketChannel().write(data);
+		this.sendCommand(response, peer);
 	}
 
 	void recievedSharedFileFragmentRequest(SharedFileFragmentRequest sharedFileFragmentRequest, PeerConnected peer) throws IOException {
@@ -123,9 +120,13 @@ public class PeersConnectedManager implements Runnable {
 		if (length <= 65536) {
 			ByteBuffer blob = this.dataBase.getFileFragment(fileName, size, offset, length);
 			var response = new SharedFileFragmentResponse(fileName, size, offset, length, blob);
-			var data = response.serialize().getByteBuffer();
-			data.flip();
-			peer.getSocketChannel().write(data);
+			this.sendCommand(response, peer);
 		}
+	}
+
+	private void sendCommand(Serializable command, PeerConnected peer) throws IOException {
+		var data = command.serialize();
+		data.flip();
+		peer.getSocketChannel().write(data.getByteBuffer());
 	}
 }
