@@ -165,7 +165,7 @@ fabric.properties
 .mtj.tmp/
 
 # Package Files #
-*.jar
+target/*.jar
 *.war
 *.nar
 *.ear
